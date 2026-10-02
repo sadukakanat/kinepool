@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kinepool | Global Resource Ledger (MCC Terminal 1)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .mono-font { font-family: 'JetBrains Mono', monospace; }
+        .glow-border { box-shadow: 0 0 25px rgba(59, 130, 246, 0.15); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
+
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
+                <span class="text-lg font-bold tracking-wider text-white">KINEPOOL</span>
+                <span class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">KUTS Rev 8</span>
+            </div>
+            <nav class="hidden md:flex space-x-6 text-sm font-medium text-slate-300">
+                <a href="index.html" class="hover:text-emerald-400 transition">Overview</a>
+                <a href="register.html" class="hover:text-emerald-400 transition">Node Registry</a>
+                <a href="asset-register.html" class="hover:text-emerald-400 transition">Mint Kines</a>
+                <a href="explorer.html" class="hover:text-emerald-400 transition">Ledger Explorer</a>
+            </nav>
+            <div>
+                <a href="register.html" class="bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition shadow-lg shadow-emerald-900/20 inline-block">
+                    Connect NodeID
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Container -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
+
+        <!-- Hero Banner -->
+        <section class="bg-gradient-to-r from-slate-900 to-slate-900/40 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
+            <div class="max-w-3xl">
+                <h1 class="text-3xl sm:text-4xl font-bold text-white tracking-tight">Global Resource Ledger</h1>
+                <p class="mt-2 text-slate-400 text-base sm:text-lg">
+                    Register global assets, verify telemetry via RVE, and settle value into Kines ($K$) using the deterministic 64-order KUTS synchronization framework.
+                </p>
+            </div>
+            <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-slate-800/80">
+                <div>
+                    <span class="text-xs text-slate-500 uppercase tracking-wider">Session-Epoch ($T_{38}$)</span>
+                    <p class="text-lg font-semibold text-emerald-400">334.00 ns</p>
+                </div>
+                <div>
+                    <span class="text-xs text-slate-500 uppercase tracking-wider">Kine Floor Rate</span>
+                    <p class="text-lg font-semibold text-white" id="floor-display">$2.00 USD / K</p>
+                </div>
+                <div>
+                    <span class="text-xs text-slate-500 uppercase tracking-wider">Master Origin Node</span>
+                    <p class="text-lg font-semibold text-white">THRINC000 (Thrissur)</p>
+                </div>
+                <div>
+                    <span class="text-xs text-slate-500 uppercase tracking-wider">Server Status</span>
+                    <p class="text-lg font-semibold text-emerald-400" id="server-status">Connecting...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left 2 Cols: Live Ledger Stream -->
+            <div class="lg:col-span-2 bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center justify-between">
+                        <span>Live Ledger Stream</span>
+                        <span class="text-xs text-emerald-400 bg-emerald-950/50 px-2 py-1 rounded border border-emerald-800/50">Base-100 Payload Active</span>
+                    </h2>
+                    <div class="space-y-3">
+                        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/60 text-sm flex justify-between items-center">
+                            <div>
+                                <p class="text-slate-200 font-medium">Gravitational-Wave Reference Event (GW150914)</p>
+                                <p class="text-xs text-slate-500 mono-font mt-0.5">03:00.01.13.51.71.67.97.76.61.67.66-THR.01</p>
+                            </div>
+                            <span class="text-xs text-emerald-400 font-semibold">Verified</span>
+                        </div>
+                        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/60 text-sm flex justify-between items-center">
+                            <div>
+                                <p class="text-slate-200 font-medium">System Reference Epoch ($T_0$) Initialization</p>
+                                <p class="text-xs text-slate-500 mono-font mt-0.5">01:00.00.00.00.00.00.00.00.00.00.00-THRINC000.00</p>
+                            </div>
+                            <span class="text-xs text-slate-400 font-semibold">Anchor</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-800/80 text-xs text-slate-500 flex justify-between items-center">
+                    <span>Engine Status: All 4 Backend Engines Active</span>
+                    <a href="asset-register.html" class="text-emerald-400 hover:underline">Proceed to Minting &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Right Col: Quick Actions -->
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-lg font-semibold text-white mb-2">Terminal Quick Links</h2>
+                    <p class="text-xs text-slate-400 mb-4">Access hardware node registration or execute asset settlement directly through the MCC network.</p>
+                    <div class="space-y-3">
+                        <a href="register.html" class="block p-3 bg-slate-950 hover:border-emerald-500 border border-slate-800 rounded-xl transition">
+                            <span class="text-xs font-bold text-white block">1. Register Hardware Terminal</span>
+                            <span class="text-[11px] text-slate-400">Generate secure enclave NodeID serial.</span>
+                        </a>
+                        <a href="asset-register.html" class="block p-3 bg-slate-950 hover:border-emerald-500 border border-slate-800 rounded-xl transition">
+                            <span class="text-xs font-bold text-white block">2. Register Asset & Mint Kines</span>
+                            <span class="text-[11px] text-slate-400">Convert energy/compute into tokenized value ($K$).</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <div class="text-[11px] text-slate-500 mono-font text-center">
+                        Master Origin: Thrissur, India (THRINC000)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+        <p>Kinepool // Global Resource Ledger &bull; Built on KUTS Revision 8 Conformance Track</p>
+    </footer>
+
+    <script>
+        // Check backend health on load
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('/api/health');
+                const data = await res.json();
+                if (data.status === 'operational') {
+                    document.getElementById('server-status').innerText = 'Online (Synced)';
+                    document.getElementById('floor-display').innerText = `$${data.kine_floor_rate_usd.toFixed(2)} USD / K`;
+                } else {
+                    document.getElementById('server-status').innerText = 'Degraded';
+                }
+            } catch (err) {
+                document.getElementById('server-status').innerText = 'Offline (Standalone)';
+            }
+        });
+    </script>
+</body>
+</html>
