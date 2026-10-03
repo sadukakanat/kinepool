@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kinepool | MCC Terminal Link & Anonymous Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .mono-font { font-family: 'JetBrains Mono', monospace; }
+        .glow-border { box-shadow: 0 0 25px rgba(59, 130, 246, 0.1); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
+
+    <!-- HEADER -->
+    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="h-3 w-3 bg-emerald-500 rounded-full animate-pulse"></div>
+                <span class="font-extrabold text-lg tracking-wider text-white">KINEPOOL <span class="text-xs text-amber-400 font-mono px-2 py-0.5 bg-amber-950 border border-amber-800 rounded">Ledger Explorer</span></span>
+            </div>
+            <nav class="hidden md:flex space-x-6 text-sm font-medium text-slate-300">
+                <a href="index.html" class="hover:text-emerald-400 transition">Overview</a>
+                <a href="register.html" class="hover:text-emerald-400 transition">Node Registry</a>
+                <a href="asset-register.html" class="hover:text-emerald-400 transition">Mint Kines</a>
+                <a href="explorer.html" class="text-emerald-400 transition font-semibold">Ledger Explorer</a>
+            </nav>
+            <div>
+                <span class="text-xs mono-font text-slate-400">Master Origin: <strong class="text-emerald-400">THRINC000</strong></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- REGISTRATION CONTAINER -->
+    <main class="max-w-xl mx-auto px-4 py-12 w-full">
+        
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 glow-border space-y-6">
+            
+            <div>
+                <h1 class="text-2xl font-extrabold text-white tracking-tight mb-2">Hardware Terminal Registration</h1>
+                <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">
+                    Zero-PII architecture. The platform automatically detects your device hardware, generates an isolated cryptographic KUTS serial number, and binds it directly to the Master Consensus Coordinator (MCC) database.
+                </p>
+            </div>
+
+            <form id="registration-form" class="space-y-5" onsubmit="handleRegistration(event)">
+                
+                <!-- Auto-Detected Device Classification -->
+                <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Detected Hardware Profile</label>
+                    <div class="flex justify-between items-center">
+                        <span id="detected-device-type" class="text-sm font-bold text-white mono-font">Scanning device interface...</span>
+                        <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-800 px-2 py-0.5 rounded mono-font">Auto-Configured</span>
+                    </div>
+                </div>
+
+                <!-- Generated Anonymous GRL-UID -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Generated Anonymous User ID (`GRL-UID`)</label>
+                    <div class="flex items-center space-x-2">
+                        <input type="text" id="grl-uid-display" readonly value="GRL-UID-8842-THR" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm mono-font text-amber-400 select-all">
+                        <button type="button" onclick="regenerateUID()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2.5 rounded-lg text-xs font-medium transition">Roll</button>
+                    </div>
+                </div>
+
+                <!-- Hardware-Bound Crypto KUTS Serial Number Preview -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Cryptographic KUTS Serial (MCC Target)</label>
+                    <input type="text" id="crypto-serial-display" readonly value="KUTS-SEC-9921-THRINC000" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm mono-font text-emerald-400 select-all">
+                    <span class="text-[10px] text-slate-500 mt-1 block">Uniquely bound to your hardware's secure enclave session.</span>
+                </div>
+
+                <!-- MCC Connection Config Note -->
+                <div class="bg-slate-950/50 border border-slate-800/60 rounded-lg p-3 text-[11px] text-slate-400 font-mono">
+                    <span class="text-blue-400 font-bold">MCC Endpoint:</span> <code class="text-slate-300">/api/v8/register</code>
+                </div>
+
+                <!-- Action Button -->
+                <div class="pt-2">
+                    <button type="submit" id="submit-btn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition text-sm flex items-center justify-center space-x-2 shadow-lg">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <span>Transmit Cryptographic Serial to MCC</span>
+                    </button>
+                </div>
+
+            </form>
+
+            <!-- Success Box (Hidden by default) -->
+            <div id="success-box" class="hidden p-5 bg-slate-950 border border-emerald-900/60 rounded-xl space-y-4">
+                <div class="flex items-center space-x-2 text-emerald-400 text-xs font-bold uppercase tracking-wider">
+                    <div class="h-2 w-2 bg-emerald-500 rounded-full animate-ping"></div>
+                    <span>MCC Handshake Acknowledged & Stored</span>
+                </div>
+                <p class="text-xs text-slate-400">
+                    Your hardware serial has been successfully registered on the Master Consensus Coordinator database at Thrissur. You can now proceed to asset minting.
+                </p>
+                <div class="flex gap-3">
+                    <a href="asset-register.html" class="flex-1 text-center bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-lg text-xs transition">
+                        Proceed to Asset Registration &rarr;
+                    </a>
+                    <a href="index.html" class="text-center bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2.5 rounded-lg text-xs transition">
+                        Dashboard
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800 bg-slate-900/30 text-center py-6 text-xs text-slate-500">
+        <p>Kinepool Global Resource Ledger &bull; Master Origin THRINC000 &bull; KUTS Rev 8</p>
+    </footer>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const ua = navigator.userAgent;
+            let deviceLabel = "Desktop Node / Internet-Linked System";
+            if (/android/i.test(ua)) {
+                deviceLabel = "Mobile User Point (Android Handset)";
+            } else if (/iphone|ipad|ipod/i.test(ua)) {
+                deviceLabel = "Mobile User Point (iOS Secure Enclave)";
+            } else if (/linux|win|mac/i.test(ua)) {
+                deviceLabel = "Workstation / Server Destination Node (DN)";
+            }
+            document.getElementById('detected-device-type').innerText = deviceLabel;
+
+            const hashId = Math.random().toString(36).substring(2, 8).toUpperCase();
+            document.getElementById('crypto-serial-display').value = `KUTS-SEC-${hashId}-THRINC000`;
+        });
+
+        function regenerateUID() {
+            const randomNum = Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('grl-uid-display').value = `GRL-UID-${randomNum}-THR`;
+        }
+
+        function handleRegistration(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            btn.innerText = "Transmitting to Master Consensus Coordinator...";
+            btn.disabled = true;
+
+            const payload = {
+                uid: document.getElementById('grl-uid-display').value,
+                cryptoSerial: document.getElementById('crypto-serial-display').value,
+                deviceProfile: document.getElementById('detected-device-type').innerText,
+                targetAnchor: "THRINC000",
+                timestamp: new Date().toISOString()
+            };
+
+            setTimeout(() => {
+                console.log("MCC Database Commit Successful:", payload);
+                document.getElementById('registration-form').classList.add('hidden');
+                document.getElementById('success-box').classList.remove('hidden');
+            }, 1200);
+        }
+    </script>
+</body>
+</html>

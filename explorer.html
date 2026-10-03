@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kinepool | Ledger Explorer & Audit Terminal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .mono-font { font-family: 'JetBrains Mono', monospace; }
+        .glow-border { box-shadow: 0 0 25px rgba(59, 130, 246, 0.1); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
+
+    <!-- HEADER -->
+    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="h-3 w-3 bg-emerald-500 rounded-full animate-pulse"></div>
+                <span class="font-extrabold text-lg tracking-wider text-white">KINEPOOL <span class="text-xs text-amber-400 font-mono px-2 py-0.5 bg-amber-950 border border-amber-800 rounded">Ledger Explorer</span></span>
+            </div>
+            <nav class="hidden md:flex space-x-6 text-sm font-medium text-slate-300">
+                <a href="index.html" class="hover:text-emerald-400 transition">Overview</a>
+                <a href="register.html" class="hover:text-emerald-400 transition">Node Registry</a>
+                <a href="asset-register.html" class="hover:text-emerald-400 transition">Mint Kines</a>
+                <a href="explorer.html" class="text-emerald-400 transition font-semibold">Ledger Explorer</a>
+            </nav>
+            <div>
+                <span class="text-xs mono-font text-slate-400">Master Origin: <strong class="text-emerald-400">THRINC000</strong></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full space-y-8">
+        
+        <!-- Search & Query Section -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 glow-border space-y-4">
+            <h1 class="text-2xl font-extrabold text-white tracking-tight">KUTS Master Ledger Search</h1>
+            <p class="text-slate-400 text-xs sm:text-sm">
+                Inspect immutable composite identifiers, verify RVE signatures, and track Least Action Protocol settlements across the global resource network.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                <input type="text" id="search-input" placeholder="Enter Composite ID (e.g. 03:00.01...) or leave blank for recent..." class="flex-grow bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm mono-font text-slate-200 focus:outline-none focus:border-emerald-500">
+                <button onclick="searchLedger()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-3 rounded-xl transition text-sm shadow-lg shadow-emerald-900/20">
+                    Query Ledger
+                </button>
+            </div>
+        </div>
+
+        <!-- Ledger Feed Table -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center">
+                <h2 class="text-lg font-semibold text-white">PostgreSQL Immutable Commitments</h2>
+                <span class="text-xs text-slate-400 mono-font">Sync Status: <span id="sync-status" class="text-emerald-400">Live DB Connected</span></span>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-300">
+                    <thead class="bg-slate-950 text-xs uppercase text-slate-500 mono-font border-b border-slate-800">
+                        <tr>
+                            <th class="px-6 py-4">Category</th>
+                            <th class="px-6 py-4">Composite KUTS Identifier</th>
+                            <th class="px-6 py-4">Minted Value</th>
+                            <th class="px-6 py-4">USD Valuation</th>
+                            <th class="px-6 py-4">State</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ledger-table-body" class="divide-y divide-slate-800/60 font-mono text-xs">
+                        <!-- Dynamically populated via PostgreSQL query -->
+                        <tr>
+                            <td colspan="5" class="px-6 py-6 text-center text-slate-500">Loading ledger records from database...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800 bg-slate-900/30 text-center py-6 text-xs text-slate-500">
+        <p>Kinepool Global Resource Ledger &bull; Master Origin THRINC000 &bull; KUTS Rev 8</p>
+    </footer>
+
+    <script>
+        // Automatically fetch recent ledger records on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchLedgerData();
+        });
+
+        async function searchLedger() {
+            const query = document.getElementById('search-input').value.trim();
+            fetchLedgerData(query);
+        }
+
+        async function fetchLedgerData(searchQuery = '') {
+            const tbody = document.getElementById('ledger-table-body');
+            tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-6 text-center text-slate-500">Querying PostgreSQL database...</td></tr>`;
+
+            try {
+                const url = searchQuery ? `/api/v8/ledger/search?query=${encodeURIComponent(searchQuery)}` : '/api/v8/ledger/search';
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Failed to fetch ledger records');
+                
+                const data = await response.json();
+                
+                if (data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-6 text-center text-amber-400">No matching ledger commitments found.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = '';
+                data.forEach(item => {
+                    const catCode = item.composite_kuts_id.split(':')[0] || '00';
+                    const row = document.createElement('tr');
+                    row.className = "hover:bg-slate-800/40 transition";
+                    row.innerHTML = `
+                        <td class="px-6 py-4 text-emerald-400 font-bold">${catCode}</td>
+                        <td class="px-6 py-4 text-amber-300 select-all">${item.composite_kuts_id}</td>
+                        <td class="px-6 py-4 text-emerald-400">${item.raw_kines.toFixed(4)} K</td>
+                        <td class="px-6 py-4 text-white">$${item.total_valuation_usd.toFixed(2)}</td>
+                        <td class="px-6 py-4"><span class="px-2 py-0.5 bg-emerald-950 text-emerald-400 rounded border border-emerald-800">SETTLED</span></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (err) {
+                console.error("Ledger Search Error:", err);
+                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-6 text-center text-red-400">Error connecting to database query endpoint.</td></tr>`;
+            }
+        }
+    </script>
+</body>
+</html>
