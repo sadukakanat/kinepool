@@ -1,0 +1,30 @@
+# Exported from Render on 2026-10-03T13:21:05Z
+version: "1"
+projects:
+- name: Kinepool Public
+  environments:
+  - name: Platform
+    services:
+    - type: web
+      name: kinepool
+      runtime: python
+      repo: https://github.com/sadukakanat/kinepool
+      plan: free
+      envVars:
+      - key: alembic
+        sync: false
+      - key: asyncpg
+        sync: false
+      - key: sqlalchemy
+        sync: false
+      - key: pydantic
+        sync: false
+      - key: uvicorn
+        sync: false
+      - key: fastapi
+        sync: false
+      region: singapore
+      buildCommand: pip install -r requirements.txt
+      startCommand: '# Run the FastAPI server using Uvicorn CMD ["uvicorn", "backend.main:app",
+        "--host", "0.0.0.0", "--port", "8000"]'
+      autoDeployTrigger: commit
