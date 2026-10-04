@@ -1,94 +1,72 @@
 """
-Kinepool // KUTS Revision 8 Resource-Verification Engine (RVE)
-Engine C: Telemetry ingestion, cryptographic attestation, unique measurement 
-tracking, and double-counting prevention.
+Kinepool // KUTS Revision 8 Resource-Verification Engine (RVE), Engine C.
+
+IMPORTANT - what a signature here means:
+The HMAC proves that THIS server received and recorded exactly this packet at
+this time. It does NOT prove the readings are true. Until a real metering
+source (smart-meter API, cloud billing API, ...) is integrated, packets carry
+metering_source = "SELF_REPORTED" and trust_level = "UNVERIFIED".
+
+Double-counting is prevented in the database (unique idempotency_key per
+terminal and unique source_reading_id), not in process memory.
 """
 
-import uuid
 import hashlib
+import hmac
 import json
+import logging
+import os
+import secrets
+import uuid
 from datetime import datetime, timezone
-from typing import Dict, Any, Optional
+
+log = logging.getLogger("kinepool.rve")
+
+
+def load_signing_key() -> bytes:
+    key = os.getenv("RVE_SIGNING_KEY")
+    if key:
+        return key.encode("utf-8")
+    log.warning("RVE_SIGNING_KEY not set: using an ephemeral key. Signatures made before "
+                "the next restart will NOT verify afterwards. Set RVE_SIGNING_KEY in production.")
+    return secrets.token_bytes(32)
+
 
 class ResourceVerificationEngine:
-    """
-    Validates, signs, and attests raw resource telemetry before it enters 
-    the Kinepool Normalization and Valuation pipeline.
-    """
-    
-    def __init__(self):
-        # Ledger registry tracking consumed measurement IDs to prevent double-minting
-        self._consumed_measurement_ids: set = set()
-        
-    def generate_measurement_id(self, asset_source: str, timestamp: str) -> str:
-        """Generates a globally unique measurement ID (UUIDv4 + SHA256 hash)."""
-        unique_raw = f"{asset_source}-{timestamp}-{uuid.uuid4()}"
-        return hashlib.sha256(unique_raw.encode('utf-8')).hexdigest()
+    SELF_REPORTED = "SELF_REPORTED"
 
-    def attest_telemetry(self, 
-                         node_id: str, 
-                         category_code: int, 
-                         resource_type: str, 
-                         raw_metrics: Dict[str, Any], 
-                         metering_source: str) -> Dict[str, Any]:
-        """
-        Ingests raw telemetry, checks against double-counting, signs cryptographically,
-        and outputs an RVE-attested telemetry packet.
-        """
-        timestamp_str = datetime.now(timezone.utc).isoformat()
-        measurement_id = self.generate_measurement_id(node_id, timestamp_str)
-        
-        # Check double-counting constraint (Section 6.3)
-        if measurement_id in self._consumed_measurement_ids:
-            raise ValueError(f"DUPLICATE_ERROR: Measurement ID {measurement_id} has already been consumed.")
+    def __init__(self, signing_key: bytes):
+        if len(signing_key) < 16:
+            raise ValueError("RVE signing key too short.")
+        self._key = signing_key
 
-        # Construct the attestation payload package
+    @staticmethod
+    def new_measurement_id() -> str:
+        return hashlib.sha256(uuid.uuid4().bytes + secrets.token_bytes(16)).hexdigest()
+
+    def _sign(self, packet: dict) -> str:
+        body = {k: v for k, v in packet.items() if k != "rve_signature"}
+        canonical = json.dumps(body, sort_keys=True, separators=(",", ":"))
+        return hmac.new(self._key, canonical.encode("utf-8"), hashlib.sha256).hexdigest()
+
+    def attest_telemetry(self, node_id: str, terminal_uid: str, category_code: int,
+                         resource_type: str, raw_metrics: dict,
+                         metering_source: str = SELF_REPORTED) -> dict:
         packet = {
-            "measurement_id": measurement_id,
+            "measurement_id": self.new_measurement_id(),
             "node_id": node_id,
+            "terminal_uid": terminal_uid,
             "category_code": f"{category_code:02d}",
             "resource_type": resource_type,
-            "metering_source": metering_source, # e.g., "SmartMeter-API-v2", "AWS-Cloudwatch"
+            "metering_source": metering_source,
+            "trust_level": "UNVERIFIED" if metering_source == self.SELF_REPORTED else "METERED",
             "raw_metrics": raw_metrics,
-            "attested_at_utc": timestamp_str,
-            "status": "ATTESTED"
+            "attested_at_utc": datetime.now(timezone.utc).isoformat(),
+            "status": "ATTESTED",
         }
-
-        # Generate a tamper-evident cryptographic signature for the packet
-        packet_string = json.dumps(packet, sort_keys=True)
-        digital_signature = hashlib.sha256(packet_string.encode('utf-8')).hexdigest()
-        
-        packet["rve_signature"] = digital_signature
-        
-        # Mark as registered in local verification ledger
-        self._consumed_measurement_ids.add(measurement_id)
-        
+        packet["rve_signature"] = self._sign(packet)
         return packet
 
-
-# --- Verification Test ---
-if __name__ == "__main__":
-    rve = ResourceVerificationEngine()
-    
-    print("--- Kinepool Resource-Verification Engine (RVE) Test ---")
-    
-    # Simulate incoming solar farm energy telemetry (Category 05 / Elemental or 13 / Structural)
-    solar_telemetry = {
-        "energy_kwh": 450.5,
-        "peak_output_kw": 75.0,
-        "duration_hours": 6.0
-    }
-    
-    try:
-        attested_packet = rve.attest_telemetry(
-            node_id="THR",
-            category_code=5,
-            resource_type="Renewable Energy Generation",
-            raw_metrics=solar_telemetry,
-            metering_source="Utility-SmartMeter-Grid-Modbus"
-        )
-        print("Telemetry successfully attested by RVE:")
-        print(json.dumps(attested_packet, indent=2))
-        
-    except ValueError as e:
-        print(f"Attestation Failed: {e}")
+    def verify_packet(self, packet: dict) -> bool:
+        sig = packet.get("rve_signature", "")
+        return hmac.compare_digest(sig, self._sign(packet))

@@ -44,21 +44,21 @@
             <div class="max-w-3xl">
                 <h1 class="text-3xl sm:text-4xl font-bold text-white tracking-tight">Global Resource Ledger</h1>
                 <p class="mt-2 text-slate-400 text-base sm:text-lg">
-                    Register global assets, verify telemetry via RVE, and settle value into Kines ($K$) using the deterministic 64-order KUTS synchronization framework[cite: 1].
+                    Register global assets, record telemetry through the RVE, and express value in Kines ($K$) using the deterministic 64-order KUTS synchronization framework.
                 </p>
             </div>
             <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-slate-800/80">
                 <div>
-                    <span class="text-xs text-slate-500 uppercase tracking-wider">Session-Epoch ($T_{38}$)[cite: 1]</span>
-                    <p class="text-lg font-semibold text-emerald-400">334.00 ns[cite: 1]</p>
+                    <span class="text-xs text-slate-500 uppercase tracking-wider">Session-Epoch</span>
+                    <p class="text-lg font-semibold text-emerald-400">334.00 ns</p>
                 </div>
                 <div>
-                    <span class="text-xs text-slate-500 uppercase tracking-wider">Kine Floor Rate[cite: 1]</span>
-                    <p class="text-lg font-semibold text-white" id="floor-display">$2.00 USD / K[cite: 1]</p>
+                    <span class="text-xs text-slate-500 uppercase tracking-wider">Kine Floor Rate</span>
+                    <p class="text-lg font-semibold text-white" id="floor-display">$2.00 USD / K</p>
                 </div>
                 <div>
-                    <span class="text-xs text-slate-500 uppercase tracking-wider">Master Origin Node[cite: 1]</span>
-                    <p class="text-lg font-semibold text-white">THRINC000 (Thrissur)[cite: 1]</p>
+                    <span class="text-xs text-slate-500 uppercase tracking-wider">Master Origin Node</span>
+                    <p class="text-lg font-semibold text-white">THRINC000 (Thrissur)</p>
                 </div>
                 <div>
                     <span class="text-xs text-slate-500 uppercase tracking-wider">Server Status</span>
@@ -73,28 +73,28 @@
             <div class="lg:col-span-2 bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
                 <div>
                     <h2 class="text-lg font-semibold text-white mb-4 flex items-center justify-between">
-                        <span>Live Ledger Stream</span>
-                        <span class="text-xs text-emerald-400 bg-emerald-950/50 px-2 py-1 rounded border border-emerald-800/50">Base-100 Payload Active[cite: 1]</span>
+                        <span>Reference Vectors</span>
+                        <span class="text-xs text-emerald-400 bg-emerald-950/50 px-2 py-1 rounded border border-emerald-800/50">Base-100 Payload Active</span>
                     </h2>
                     <div class="space-y-3">
                         <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/60 text-sm flex justify-between items-center">
                             <div>
-                                <p class="text-slate-200 font-medium">Gravitational-Wave Reference Event (GW150914)[cite: 1]</p>
-                                <p class="text-xs text-slate-500 mono-font mt-0.5">03:00.01.13.51.71.67.97.76.61.67.66-THR.01[cite: 1]</p>
+                                <p class="text-slate-200 font-medium">Gravitational-Wave Reference Event (GW150914)</p>
+                                <p class="text-xs text-slate-500 mono-font mt-0.5">03:00.01.13.51.71.67.97.76.61.67.66-THR.01</p>
                             </div>
-                            <span class="text-xs text-emerald-400 font-semibold">Verified</span>
+                            <span class="text-xs text-emerald-400 font-semibold">Test vector (passes)</span>
                         </div>
                         <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/60 text-sm flex justify-between items-center">
                             <div>
-                                <p class="text-slate-200 font-medium">System Reference Epoch ($T_0$) Initialization[cite: 1]</p>
-                                <p class="text-xs text-slate-500 mono-font mt-0.5">01:00.00.00.00.00.00.00.00.00.00.00-THRINC000.00[cite: 1]</p>
+                                <p class="text-slate-200 font-medium">System Reference Epoch Initialization</p>
+                                <p class="text-xs text-slate-500 mono-font mt-0.5">01:00.00.00.00.00.00.00.00.00.00.00-THRINC000.00</p>
                             </div>
                             <span class="text-xs text-slate-400 font-semibold">Anchor</span>
                         </div>
                     </div>
                 </div>
                 <div class="mt-6 pt-4 border-t border-slate-800/80 text-xs text-slate-500 flex justify-between items-center">
-                    <span>Engine Status: All 4 Backend Engines Active[cite: 1]</span>
+                    <span id="engine-status">Engine status: checking...</span>
                     <a href="asset-register.html" class="text-emerald-400 hover:underline">Proceed to Minting &rarr;</a>
                 </div>
             </div>
@@ -103,21 +103,21 @@
             <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
                 <div>
                     <h2 class="text-lg font-semibold text-white mb-2">Terminal Quick Links</h2>
-                    <p class="text-xs text-slate-400 mb-4">Access hardware node registration or execute asset settlement directly through the MCC network.</p>
+                    <p class="text-xs text-slate-400 mb-4">Register a terminal, then record resources against the ledger. Inputs are self-reported in this prototype.</p>
                     <div class="space-y-3">
                         <a href="register.html" class="block p-3 bg-slate-950 hover:border-emerald-500 border border-slate-800 rounded-xl transition">
                             <span class="text-xs font-bold text-white block">1. Register Hardware Terminal</span>
-                            <span class="text-[11px] text-slate-400">Generate secure enclave NodeID serial[cite: 1].</span>
+                            <span class="text-[11px] text-slate-400">Get an anonymous terminal ID and access token.</span>
                         </a>
                         <a href="asset-register.html" class="block p-3 bg-slate-950 hover:border-emerald-500 border border-slate-800 rounded-xl transition">
                             <span class="text-xs font-bold text-white block">2. Register Asset & Mint Kines</span>
-                            <span class="text-[11px] text-slate-400">Convert energy/compute into tokenized value ($K$)[cite: 1].</span>
+                            <span class="text-[11px] text-slate-400">Record energy/compute as Kine units ($K$).</span>
                         </a>
                     </div>
                 </div>
                 <div class="mt-6">
                     <div class="text-[11px] text-slate-500 mono-font text-center">
-                        Master Origin: Thrissur, India (THRINC000)[cite: 1]
+                        Master Origin: Thrissur, India (THRINC000)
                     </div>
                 </div>
             </div>
@@ -127,23 +127,30 @@
 
     <!-- Footer -->
     <footer class="mt-auto border-t border-slate-800 py-6 text-center text-xs text-slate-500">
-        <p>Kinepool // Global Resource Ledger &bull; Built on KUTS Revision 8 Conformance Track[cite: 1]</p>
+        <p>Kinepool // Global Resource Ledger &bull; Built on KUTS Revision 8 Conformance Track</p>
     </footer>
 
     <script>
-        // Check backend health on load
         window.addEventListener('DOMContentLoaded', async () => {
+            const statusEl = document.getElementById('server-status');
+            const engEl = document.getElementById('engine-status');
             try {
                 const res = await fetch('/api/health');
                 const data = await res.json();
+                document.getElementById('floor-display').textContent = `$${Number(data.kine_floor_rate_usd).toFixed(2)} USD / K`;
                 if (data.status === 'operational') {
-                    document.getElementById('server-status').innerText = 'Online (Synced)';
-                    document.getElementById('floor-display').innerText = `$${data.kine_floor_rate_usd.toFixed(2)} USD / K`;
+                    statusEl.textContent = 'Online';
                 } else {
-                    document.getElementById('server-status').innerText = 'Degraded';
+                    statusEl.textContent = 'Degraded';
+                    statusEl.className = 'text-lg font-semibold text-amber-400';
                 }
+                const names = Object.keys(data.engines || {});
+                const up = names.filter(n => data.engines[n]);
+                engEl.textContent = `Engines: ${up.length}/${names.length} active` + (data.database ? ` | Database: ${data.database}` : '');
             } catch (err) {
-                document.getElementById('server-status').innerText = 'Offline (Standalone)';
+                statusEl.textContent = 'Offline';
+                statusEl.className = 'text-lg font-semibold text-red-400';
+                engEl.textContent = 'Engines: unreachable';
             }
         });
     </script>

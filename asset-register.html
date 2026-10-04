@@ -25,7 +25,7 @@
                 <a href="index.html" class="hover:text-emerald-400 transition">Overview</a>
                 <a href="register.html" class="hover:text-emerald-400 transition">Node Registry</a>
                 <a href="asset-register.html" class="hover:text-emerald-400 transition">Mint Kines</a>
-                <a href="explorer.html" class="text-emerald-400 transition font-semibold">Ledger Explorer</a>
+                <a href="explorer.html" class="hover:text-emerald-400 transition font-semibold">Ledger Explorer</a>
             </nav>
             <div>
                 <span class="text-xs mono-font text-slate-400">Master Origin: <strong class="text-emerald-400">THRINC000</strong></span>
@@ -41,8 +41,9 @@
             <div>
                 <h1 class="text-2xl font-extrabold text-white tracking-tight mb-2">Register Asset & Mint Kines</h1>
                 <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">
-                    Map resources across all 16 Functional Categories. The valuation engine calculates your tokenized Kine yield (enforcing the $2.00 floor rate) and applies the 3.0% Least Action Protocol split (PFS/RSP).
+                    Map resources across all 16 Functional Categories. The valuation engine calculates your Kine amount (applying the $2.00 floor rate) and applies the 3.0% Least Action Protocol split (PFS/RSP).
                 </p>
+                <p class="mt-3 text-[11px] text-amber-400/90 bg-amber-950/30 border border-amber-900/50 rounded-lg p-2.5">Prototype notice: energy and compute values are self-reported and are recorded as <strong>unverified</strong> until a metering source is connected.</p>
             </div>
 
             <form id="asset-form" class="space-y-5" onsubmit="handleAssetRegistration(event)">
@@ -50,7 +51,7 @@
                 <!-- Active Terminal Binding Status -->
                 <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex justify-between items-center text-xs mono-font">
                     <span class="text-slate-400">Linked Terminal Serial:</span>
-                    <span id="linked-serial-badge" class="text-emerald-400 font-bold">KUTS-SEC-AUTO-THRINC000</span>
+                    <span id="linked-serial-badge" class="text-emerald-400 font-bold break-all">checking...</span>
                 </div>
 
                 <!-- Asset Title -->
@@ -116,7 +117,7 @@
             <div id="output-box" class="hidden p-5 bg-slate-950 border border-emerald-900/60 rounded-xl space-y-4">
                 <div class="flex items-center space-x-2 text-emerald-400 text-xs font-bold uppercase tracking-wider">
                     <div class="h-2 w-2 bg-emerald-500 rounded-full animate-ping"></div>
-                    <span>MCC Master Ledger Committed Successfully</span>
+                    <span>Recorded in the Ledger</span>
                 </div>
                 
                 <div class="space-y-1">
@@ -162,57 +163,66 @@
 
     <!-- INTERACTIVE SCRIPT -->
     <script>
+        const IDEM_KEY = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2, 12));
+        let terminal = null;
+
         window.addEventListener('DOMContentLoaded', () => {
-            const randomHash = Math.random().toString(36).substring(2, 8).toUpperCase();
-            document.getElementById('linked-serial-badge').innerText = `KUTS-SEC-${randomHash}-THRINC000`;
+            try { terminal = JSON.parse(localStorage.getItem('kinepool_terminal') || 'null'); } catch (e) { terminal = null; }
+            const badge = document.getElementById('linked-serial-badge');
+            const btn = document.getElementById('mint-btn');
+            if (terminal && terminal.token) {
+                badge.textContent = terminal.kuts_serial;
+            } else {
+                badge.innerHTML = '<a href="register.html" class="text-amber-400 underline">Register a terminal first</a>';
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
         });
 
-        function handleAssetRegistration(e) {
+        async function handleAssetRegistration(e) {
             e.preventDefault();
+            if (!terminal || !terminal.token) return;
             const btn = document.getElementById('mint-btn');
-            btn.innerText = "Syncing with MCC Master Origin...";
+            const label = btn.innerHTML;
             btn.disabled = true;
+            btn.textContent = 'Recording...';
 
-            const title = document.getElementById('asset-title').value;
-            const category = document.getElementById('asset-cat').value;
-            const kwh = parseFloat(document.getElementById('asset-kwh').value) || 0;
-            const compute = parseFloat(document.getElementById('asset-compute').value) || 0;
-
-            // Normalized Kine Valuation Formula Calculation (Engine D logic)
-            const energyComponent = (kwh / 10.0) * 0.5;
-            const computeComponent = (compute / 0.1) * 0.5; // Note: 0.1M tokens is base equivalent
-            const totalKines = Math.max(0.0, energyComponent + computeComponent);
-            
-            // Floor rate enforcement ($2.00 USD minimum per Kine)
-            const floorUsdValue = totalKines * 2.00;
-
-            // Least Action Protocol 3.0% Split
-            const pfs = totalKines * 0.015;
-            const rsp = totalKines * 0.015;
-
-            // Generate Revision 8 compliant composite ID
-            const base100Payload = "00.01.13.51.71.67.97.76.61.67.66";
-            const subTick = Math.floor(Math.random() * 90 + 10);
-            const compositeId = `${category}:${base100Payload}-THR.${subTick}`;
-
-            const mintPayload = {
-                title: title,
-                functionalCategory: category,
-                kinesMinted: totalKines.toFixed(4),
-                compositeId: compositeId,
-                targetAnchor: "THRINC000"
+            const payload = {
+                title: document.getElementById('asset-title').value,
+                category: parseInt(document.getElementById('asset-cat').value, 10),
+                energy_kwh: parseFloat(document.getElementById('asset-kwh').value) || 0,
+                compute_mtok: parseFloat(document.getElementById('asset-compute').value) || 0,
+                idempotency_key: IDEM_KEY
             };
 
-            setTimeout(() => {
-                console.log("MCC Minting Commit Successful:", mintPayload);
+            try {
+                const res = await fetch('/api/v8/mint', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + terminal.token },
+                    body: JSON.stringify(payload)
+                });
+                if (res.status === 401) {
+                    try { localStorage.removeItem('kinepool_terminal'); } catch (e2) {}
+                    throw new Error('Terminal not recognised. Please register again.');
+                }
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    const detail = Array.isArray(err.detail) ? err.detail.map(d => d.msg).join('; ') : err.detail;
+                    throw new Error(detail || ('HTTP ' + res.status));
+                }
+                const r = await res.json();
                 document.getElementById('asset-form').classList.add('hidden');
-                document.getElementById('result-id').innerText = compositeId;
-                document.getElementById('result-kines').innerText = totalKines.toFixed(4);
-                document.getElementById('result-usd').innerText = `$${floorUsdValue.toFixed(2)} USD`;
-                document.getElementById('result-pfs').innerText = `${pfs.toFixed(4)} K`;
-                document.getElementById('result-rsp').innerText = `${rsp.toFixed(4)} K`;
+                document.getElementById('result-id').textContent = r.composite_kuts_id;
+                document.getElementById('result-kines').textContent = r.raw_kines;
+                document.getElementById('result-usd').textContent = '$' + r.total_valuation_usd + ' USD';
+                document.getElementById('result-pfs').textContent = r.pfs_allocation + ' K';
+                document.getElementById('result-rsp').textContent = r.rsp_allocation + ' K';
                 document.getElementById('output-box').classList.remove('hidden');
-            }, 1200);
+            } catch (err) {
+                btn.disabled = false;
+                btn.innerHTML = label;
+                alert('Could not record: ' + err.message);
+            }
         }
     </script>
 </body>

@@ -1,132 +1,107 @@
 """
 Kinepool // KUTS Revision 8 Chronometric Engine
-Engine A: Handles T0 reference epoch, JDN conversion, Session-Epoch mapping, 
-and 11-field base-100 positional encoding.
+Engine A: T0 reference epoch, Session-Epoch tick mapping, and 11-field
+base-100 positional encoding.
+
+All arithmetic is EXACT (integers / Fractions). The previous version used
+floating point, which cannot represent tick counts of ~1.1e18 (floats stop
+being exact above 2**53 ~ 9e15) and produced wrong trailing digits.
 """
 
 from datetime import datetime, timezone
-import math
+from fractions import Fraction
+
+MICROS_PER_DAY = 86_400 * 1_000_000
+JD_OF_UNIX_EPOCH = Fraction(4_881_175, 2)  # JD 2440587.5 == 1970-01-01T00:00:00 UTC
+
+
+def days_from_civil(y: int, m: int, d: int) -> int:
+    """Days since 1970-01-01 in the proleptic Gregorian calendar.
+
+    Works for any year including zero/negative (astronomical year numbering).
+    Exact integer arithmetic (Howard Hinnant's algorithm).
+    """
+    y -= m <= 2
+    era = y // 400  # floor division: correct for negative years
+    yoe = y - era * 400
+    doy = (153 * (m + (-3 if m > 2 else 9)) + 2) // 5 + d - 1
+    doe = yoe * 365 + yoe // 4 - yoe // 100 + doy
+    return era * 146_097 + doe - 719_468
+
 
 class ChronometricEngine:
-    # Authoritative Constants per KUTS Revision 8 Specification
-    SESSION_EPOCH_DURATION = 3.340e-7  # T38 in seconds (334.00 ns)
-    
-    def __init__(self):
-        # T0 reference epoch: 00:00:00 UTC on proleptic Gregorian year -9999
-        # In astronomical year numbering, year -9999 corresponds to proleptic year -9999.
-        # We handle this via standard Julian Day Number (JDN) calculations.
-        pass
+    # KUTS Rev 8 constants
+    SESSION_EPOCH_NS = 334          # T38 = 334.00 ns
+    T0_YEAR, T0_MONTH, T0_DAY = -9999, 1, 1   # 00:00:00 UTC, astronomical year -9999
+    BASE100_FIELDS = 11
 
+    # ---- Julian Day helpers (exact) -------------------------------------
     @staticmethod
-    def datetime_to_jdn(dt: datetime) -> float:
-        """
-        Converts a datetime object to a Julian Day Number (JDN) on the 
-        proleptic Gregorian calendar with astronomical year numbering.
-        """
-        year = dt.year
-        month = dt.month
-        day = dt.day
-        
-        # Astronomical year adjustment for proleptic Gregorian
-        if month <= 2:
-            year -= 1
-            month += 12
-            
-        A = math.floor(year / 100)
-        B = 2 - A + math.floor(A / 4)
-        
-        # JDN integer core for the date
-        jdn_date = math.floor(365.25 * (year + 4716)) + math.floor(30.6001 * (month + 1)) + day + B - 1524.5
-        
-        # Add fraction of day from hours, minutes, seconds, microseconds
-        day_fraction = (dt.hour * 3600 + dt.minute * 60 + dt.second + dt.microsecond / 1e6) / 86400.0
-        
-        return jdn_date + day_fraction
+    def _to_utc(dt: datetime) -> datetime:
+        if dt.tzinfo is None:
+            raise ValueError("Naive datetime rejected: supply a timezone-aware UTC datetime.")
+        return dt.astimezone(timezone.utc)
 
-    def get_to_jdn(self) -> float:
-        """
-        Calculates JDN for T0 (00:00:00 on proleptic Gregorian astronomical year -9999).
-        Astronomical year -9999 translates in standard chronological math to year -9999.
-        """
-        # Using a reference constructor for astronomical year -9999, Jan 1st
-        # Python datetime doesn't support negative years directly below year 1 natively in standard library without shift,
-        # so we compute JDN directly using algorithm mapping for year -9999.
-        target_year = -9999
-        # Proleptic Gregorian formula mapping for -9999-01-01 00:00:00 UTC
-        # Base JDN for year -9999 computed via standard astronomical formula:
-        # JDN = 365.25*(Y+4716) ... 
-        month = 1
-        day = 1
-        year = target_year
-        if month <= 2:
-            year -= 1
-            month += 12
-        A = math.floor(year / 100)
-        B = 2 - A + math.floor(A / 4)
-        jdn_t0 = math.floor(365.25 * (year + 4716)) + math.floor(30.6001 * (month + 1)) + day + B - 1524.5
-        return jdn_t0
+    def datetime_to_jdn(self, dt: datetime) -> Fraction:
+        """Exact Julian Day Number (as a Fraction) of a datetime."""
+        dt = self._to_utc(dt)
+        days = days_from_civil(dt.year, dt.month, dt.day)
+        tod_us = ((dt.hour * 60 + dt.minute) * 60 + dt.second) * 1_000_000 + dt.microsecond
+        return JD_OF_UNIX_EPOCH + days + Fraction(tod_us, MICROS_PER_DAY)
 
+    def get_t0_jdn(self) -> Fraction:
+        return JD_OF_UNIX_EPOCH + days_from_civil(self.T0_YEAR, self.T0_MONTH, self.T0_DAY)
+
+    # ---- Ticks ------------------------------------------------------------
     def compute_ticks(self, event_dt: datetime) -> int:
-        """
-        Computes elapsed Session-Epoch ticks (N) from T0 to event instant.
-        N = round( [ (JDN(E) - JDN(T0)) * 86400 ] / 3.340e-7 )
-        """
-        jdn_event = self.datetime_to_jdn(event_dt)
-        jdn_t0 = self.get_to_jdn()
-        
-        elapsed_days = jdn_event - jdn_t0
-        elapsed_seconds = elapsed_days * 86400.0
-        
-        # Division by Session-Epoch duration with nearest-integer rounding
-        tick_count_float = elapsed_seconds / self.SESSION_EPOCH_DURATION
-        return round(tick_count_float)
+        """N = round( (event - T0) / 334 ns ), half-up, exact integer math."""
+        dt = self._to_utc(event_dt)
+        days = days_from_civil(dt.year, dt.month, dt.day) - days_from_civil(
+            self.T0_YEAR, self.T0_MONTH, self.T0_DAY
+        )
+        tod_us = ((dt.hour * 60 + dt.minute) * 60 + dt.second) * 1_000_000 + dt.microsecond
+        elapsed_us = days * MICROS_PER_DAY + tod_us
+        if elapsed_us < 0:
+            raise ValueError("Event precedes the T0 reference epoch.")
+        # ticks = elapsed_us * 1000 ns / 334 ns, rounded half-up
+        return (2 * elapsed_us * 1000 + self.SESSION_EPOCH_NS) // (2 * self.SESSION_EPOCH_NS)
 
+    def now_ticks(self) -> int:
+        return self.compute_ticks(datetime.now(timezone.utc))
+
+    # ---- Base-100 encoding --------------------------------------------------
     def encode_base100_payload(self, tick_count: int) -> str:
-        """
-        Encodes an integer tick count into an 11-field base-100 positional payload string 
-        (22 decimal digits, zero-padded, dot-separated).
-        Each field represents values 00 to 99. Base-100 means shifting by powers of 100.
-        """
-        fields = []
-        val = tick_count
-        
-        # Extract 11 base-100 fields from least significant to most significant, then reverse
-        for _ in range(11):
+        """11 base-100 fields (22 digits), most significant first, dot-separated."""
+        if tick_count < 0:
+            raise ValueError("tick_count must be non-negative.")
+        if tick_count >= 100 ** self.BASE100_FIELDS:
+            raise OverflowError("tick_count exceeds 11 base-100 fields.")
+        fields, val = [], tick_count
+        for _ in range(self.BASE100_FIELDS):
             fields.append(val % 100)
             val //= 100
-            
         fields.reverse()
-        
-        # Format each field as a 2-digit zero-padded string
         return ".".join(f"{f:02d}" for f in fields)
 
-    def generate_identifier(self, category_code: int, event_dt: datetime, node_id: str, sub_tick: int) -> str:
-        """
-        Assembles the complete KUTS composite identifier:
-        [2-Digit Category]:[11 Base-100 Fields]-[Anchor Node ID].[Sub-Tick Counter]
-        """
-        ticks = self.compute_ticks(event_dt)
-        payload = self.encode_base100_payload(ticks)
-        
-        cat_str = f"{category_code:02d}"
-        sub_tick_str = f"{sub_tick:02d}"
-        
-        return f"{cat_str}:{payload}-{node_id}.{sub_tick_str}"
+    def generate_identifier(self, category_code: int, event_dt: datetime,
+                            node_id: str, sub_tick: int) -> str:
+        """[2-digit category]:[11 base-100 fields]-[Node ID].[sub-tick]"""
+        if not 1 <= category_code <= 16:
+            raise ValueError("category_code must be 1..16.")
+        if not 0 <= sub_tick <= 99:
+            raise ValueError("sub_tick must be 0..99.")
+        return self.compose_identifier(category_code, self.compute_ticks(event_dt), node_id, sub_tick)
+
+    def compose_identifier(self, category_code: int, ticks: int, node_id: str, sub_tick: int) -> str:
+        return f"{category_code:02d}:{self.encode_base100_payload(ticks)}-{node_id}.{sub_tick:02d}"
 
 
-# --- Verification Test: GW150914 Test Case (Section 9.2) ---
 if __name__ == "__main__":
-    engine = ChronometricEngine()
-    
-    # GW150914 Event Timestamp: 14 September 2015, 09:50:45.39 UTC
-    gw_time = datetime(2015, 9, 14, 9, 50, 45, 390000, tzinfo=timezone.utc)
-    
-    ticks = engine.compute_ticks(gw_time)
-    payload = engine.encode_base100_payload(ticks)
-    full_id = engine.generate_identifier(category_code=3, event_dt=gw_time, node_id="THR", sub_tick=1)
-    
-    print("--- Kinepool Chronometric Engine Test ---")
-    print(f"Calculated Ticks (N): {ticks}")
-    print(f"Base-100 Payload:     {payload}")
-    print(f"Composite Identifier: {full_id}")
-    print(f"Expected Identifier:  03:00.01.13.51.71.67.97.76.61.67.66-THR.01")
+    eng = ChronometricEngine()
+    gw = datetime(2015, 9, 14, 9, 50, 45, 390000, tzinfo=timezone.utc)
+    ident = eng.generate_identifier(3, gw, "THR", 1)
+    expected = "03:00.01.13.51.71.67.97.76.61.67.66-THR.01"
+    print("GW150914 ticks :", eng.compute_ticks(gw))
+    print("Identifier     :", ident)
+    print("Expected       :", expected)
+    print("PASS" if ident == expected else "FAIL")

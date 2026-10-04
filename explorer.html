@@ -40,7 +40,7 @@
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 glow-border space-y-4">
             <h1 class="text-2xl font-extrabold text-white tracking-tight">KUTS Master Ledger Search</h1>
             <p class="text-slate-400 text-xs sm:text-sm">
-                Inspect immutable composite identifiers, verify RVE signatures, and track Least Action Protocol settlements across the global resource network.
+                Inspect composite identifiers and Least Action Protocol allocations. Use the Verify chain button to recompute the ledger's hash chain and detect any altered or missing record.
             </p>
             
             <div class="flex flex-col sm:flex-row gap-3 pt-2">
@@ -48,14 +48,17 @@
                 <button onclick="searchLedger()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-3 rounded-xl transition text-sm shadow-lg shadow-emerald-900/20">
                     Query Ledger
                 </button>
+                <button onclick="verifyChain()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-6 py-3 rounded-xl transition text-sm">
+                    Verify chain
+                </button>
             </div>
         </div>
 
         <!-- Ledger Feed Table -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
             <div class="p-6 border-b border-slate-800 flex justify-between items-center">
-                <h2 class="text-lg font-semibold text-white">PostgreSQL Immutable Commitments</h2>
-                <span class="text-xs text-slate-400 mono-font">Sync Status: <span id="sync-status" class="text-emerald-400">Live DB Connected</span></span>
+                <h2 class="text-lg font-semibold text-white">Ledger Records (append-only, hash-chained)</h2>
+                <span class="text-xs text-slate-400 mono-font">Sync Status: <span id="sync-status" class="text-slate-400">Checking...</span></span>
             </div>
             
             <div class="overflow-x-auto">
@@ -65,14 +68,14 @@
                             <th class="px-6 py-4">Category</th>
                             <th class="px-6 py-4">Composite KUTS Identifier</th>
                             <th class="px-6 py-4">Minted Value</th>
-                            <th class="px-6 py-4">USD Valuation</th>
-                            <th class="px-6 py-4">State</th>
+                            <th class="px-6 py-4">Reference Value (USD)</th>
+                            <th class="px-6 py-4">State / Hash</th>
                         </tr>
                     </thead>
                     <tbody id="ledger-table-body" class="divide-y divide-slate-800/60 font-mono text-xs">
                         <!-- Dynamically populated via PostgreSQL query -->
                         <tr>
-                            <td colspan="5" class="px-6 py-6 text-center text-slate-500">Loading ledger records from database...</td>
+                            <td colspan="5" class="px-6 py-6 text-center text-slate-500">Loading ledger records...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -87,49 +90,69 @@
     </footer>
 
     <script>
-        // Automatically fetch recent ledger records on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            fetchLedgerData();
-        });
+        function esc(v) {
+            return String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        }
+
+        window.addEventListener('DOMContentLoaded', () => { fetchLedgerData(); });
 
         async function searchLedger() {
-            const query = document.getElementById('search-input').value.trim();
-            fetchLedgerData(query);
+            fetchLedgerData(document.getElementById('search-input').value.trim());
+        }
+
+        async function verifyChain() {
+            const el = document.getElementById('sync-status');
+            el.className = 'text-slate-400'; el.textContent = 'Verifying chain...';
+            try {
+                const res = await fetch('/api/v8/ledger/verify');
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const r = await res.json();
+                if (r.ok) {
+                    el.className = 'text-emerald-400';
+                    el.textContent = `Chain intact (${r.checked} records)`;
+                } else {
+                    el.className = 'text-red-400';
+                    el.textContent = `Chain BROKEN at seq ${r.first_bad_seq}: ${r.reason}`;
+                }
+            } catch (err) {
+                el.className = 'text-red-400'; el.textContent = 'Verification unavailable';
+            }
         }
 
         async function fetchLedgerData(searchQuery = '') {
             const tbody = document.getElementById('ledger-table-body');
-            tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-6 text-center text-slate-500">Querying PostgreSQL database...</td></tr>`;
-
+            const sync = document.getElementById('sync-status');
+            tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-6 text-center text-slate-500">Querying ledger...</td></tr>`;
             try {
                 const url = searchQuery ? `/api/v8/ledger/search?query=${encodeURIComponent(searchQuery)}` : '/api/v8/ledger/search';
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Failed to fetch ledger records');
-                
                 const data = await response.json();
-                
+                sync.className = 'text-emerald-400'; sync.textContent = 'Database connected';
+
                 if (data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-6 text-center text-amber-400">No matching ledger commitments found.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-6 text-center text-amber-400">No matching ledger records found.</td></tr>`;
                     return;
                 }
-
                 tbody.innerHTML = '';
                 data.forEach(item => {
-                    const catCode = item.composite_kuts_id.split(':')[0] || '00';
+                    const catCode = String(item.composite_kuts_id).split(':')[0] || '00';
                     const row = document.createElement('tr');
-                    row.className = "hover:bg-slate-800/40 transition";
+                    row.className = 'hover:bg-slate-800/40 transition';
                     row.innerHTML = `
-                        <td class="px-6 py-4 text-emerald-400 font-bold">${catCode}</td>
-                        <td class="px-6 py-4 text-amber-300 select-all">${item.composite_kuts_id}</td>
-                        <td class="px-6 py-4 text-emerald-400">${item.raw_kines.toFixed(4)} K</td>
-                        <td class="px-6 py-4 text-white">$${item.total_valuation_usd.toFixed(2)}</td>
-                        <td class="px-6 py-4"><span class="px-2 py-0.5 bg-emerald-950 text-emerald-400 rounded border border-emerald-800">SETTLED</span></td>
+                        <td class="px-6 py-4 text-emerald-400 font-bold">${esc(catCode)}</td>
+                        <td class="px-6 py-4 text-amber-300 select-all">${esc(item.composite_kuts_id)}</td>
+                        <td class="px-6 py-4 text-emerald-400">${esc(item.raw_kines)} K</td>
+                        <td class="px-6 py-4 text$${esc(item.total_valuation_usd)}</td>
+                        <td class="px-6 py-4"><span class="px-2 py-0.5 bg-emerald-950 text-emerald-400 rounded border border-emerald-800">RECORDED</span>
+                            <span class="block text-[10px] text-slate-500 mt-1" title="${esc(item.entry_hash)}">#${esc(item.seq)} ${esc(String(item.entry_hash).slice(0, 12))}&hellip;</span></td>
                     `;
                     tbody.appendChild(row);
                 });
             } catch (err) {
-                console.error("Ledger Search Error:", err);
-                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-6 text-center text-red-400">Error connecting to database query endpoint.</td></tr>`;
+                console.error('Ledger Search Error:', err);
+                sync.className = 'text-red-400'; sync.textContent = 'Database unreachable';
+                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-6 text-center text-red-400">Error connecting to the ledger query endpoint.</td></tr>`;
             }
         }
     </script>
