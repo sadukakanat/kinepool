@@ -3,12 +3,9 @@ uvicorn==0.28.0
 pydantic==2.6.4
 sqlalchemy[asyncio]==2.0.28
 asyncpg==0.29.0
-```[cite: 1]
-
----
 
 ### 2. `requirements-dev.txt`
-Extends production requirements with testing and local development packages[cite: 1].
+Extends production requirements with testing and local development packages.
 
 ```text
 -r requirements.txt
@@ -16,12 +13,9 @@ aiosqlite==0.20.0
 httpx==0.27.0
 pytest==8.1.1
 pytest-asyncio==0.23.6
-```[cite: 1]
-
----
 
 ### 3. `database.py`
-Handles environment configuration, connection string parsing (including Render/Heroku style PostgreSQL URLs and SQLite local fallback), SSL parameter translation, and async session management[cite: 1].
+Handles environment configuration, connection string parsing (including Render/Heroku style PostgreSQL URLs and SQLite local fallback), SSL parameter translation, and async session management.
 
 ```python
 import os
@@ -79,12 +73,9 @@ async def get_db():
         except Exception:
             await session.rollback()
             raise
-```[cite: 1]
-
----
 
 ### 4. `models.py`
-Defines the SQLAlchemy ORM models for anchor nodes, user terminals, sub-tick allocation state, RVE measurements, and hash-chained settlements[cite: 1].
+Defines the SQLAlchemy ORM models for anchor nodes, user terminals, sub-tick allocation state, RVE measurements, and hash-chained settlements.
 
 ```python
 from datetime import datetime, timezone
@@ -148,7 +139,6 @@ class DBMeasurement(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
     __table_args__ = (UniqueConstraint("terminal_id", "idempotency_key", name="_terminal_idem_uc"),)
 
-
 class DBSettlement(Base):
     """Append-only, hash-chained. Amounts are integers in e8 units (1 K = 1e8)."""
     __tablename__ = "settlements"
@@ -165,12 +155,9 @@ class DBSettlement(Base):
     prev_hash: Mapped[str] = mapped_column(String(64))
     entry_hash: Mapped[str] = mapped_column(String(64))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
-```[cite: 1]
-
----
 
 ### 5. `Dockerfile`
-Configures the production container image based on Python 3.12-slim, bundling system build essentials and setting up user permissions[cite: 1].
+Configures the production container image based on Python 3.12-slim, bundling system build essentials and setting up user permissions.
 
 ```dockerfile
 FROM python:3.12-slim
@@ -194,12 +181,9 @@ USER appuser
 EXPOSE 8000
 # Render supplies $PORT; --proxy-headers makes request.client.host the real client IP
 CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips='*'"]
-```[cite: 1]
-
----
 
 ### 6. `.dockerignore`
-Excludes temporary files, local development databases, and testing suites from the Docker build context[cite: 1].
+Excludes temporary files, local development databases, and testing suites from the Docker build context.
 
 ```text
 tests/
