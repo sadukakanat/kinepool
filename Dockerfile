@@ -19,9 +19,6 @@ USER appuser
 EXPOSE 8000
 # Render supplies $PORT; --proxy-headers makes request.client.host the real client IP
 CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips='*'"]
-```[cite: 1]
-
----
 
 ### Deployment on Render Checklist:
 1. **Repository Structure**: Push all your files (`main.py`, `database.py`, `models.py`, engines, `.html` files, `requirements.txt`, and this `Dockerfile`) to your GitHub repository.
