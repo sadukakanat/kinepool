@@ -19,10 +19,4 @@ USER appuser
 EXPOSE 8000
 # Render supplies $PORT; --proxy-headers makes request.client.host the real client IP
 CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips='*'"]
-### Deployment on Render Checklist:
-1. **Repository Structure**: Push all your files (`main.py`, `database.py`, `models.py`, engines, `.html` files, `requirements.txt`, and this `Dockerfile`) to your GitHub repository.
-2. **Create Web Service on Render**: Connect your repository and select **Docker** as the environment.
-3. **Environment Variables**: Configure the required environment variables in your Render dashboard:
-   * `DATABASE_URL`: Your PostgreSQL connection string (Render automatically provides this if you attach a PostgreSQL database).
-   * `RVE_SIGNING_KEY`: A long, secure random secret string to sign telemetry packets.
-   * `ADMIN_API_KEY`: *(Optional)* A secure key if you want to enable anchor node registrations via `POST /api/v8/nodes/register`.
+Replace the contents of your `Dockerfile` in your repository with the code above, commit the change, and trigger a new deployment on Render.
