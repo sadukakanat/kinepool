@@ -275,4 +275,3 @@ async def page(page: str):
     if page not in PAGES:          # whitelist: never expose .py files, Dockerfile, etc.
         raise HTTPException(404, "Not found")
     return FileResponse(BASE_DIR / page, media_type="text/html")
-```[cite: 1]
