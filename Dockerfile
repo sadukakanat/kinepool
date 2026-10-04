@@ -19,4 +19,3 @@ USER appuser
 EXPOSE 8000
 # Render supplies $PORT; --proxy-headers makes request.client.host the real client IP
 CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips='*'"]
-Replace the contents of your `Dockerfile` in your repository with the code above, commit the change, and trigger a new deployment on Render.
