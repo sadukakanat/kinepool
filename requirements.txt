@@ -5,7 +5,7 @@ sqlalchemy[asyncio]==2.0.28
 asyncpg==0.29.0
 
 ### 2. `requirements-dev.txt`
-Extends production requirements with testing and local development packages.
+#Extends production requirements with testing and local development packages.
 
 ```text
 -r requirements.txt
