@@ -26,4 +26,4 @@ CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-h
 3. **Environment Variables**: Configure the required environment variables in your Render dashboard:
    * `DATABASE_URL`: Your PostgreSQL connection string (Render automatically provides this if you attach a PostgreSQL database).
    * `RVE_SIGNING_KEY`: A long, secure random secret string to sign telemetry packets.
-   * `ADMIN_API_KEY`: *(Optional)* A secure key if you want to enable anchor node registrations via `POST /api/v8/nodes/register`[cite: 1].
+   * `ADMIN_API_KEY`: *(Optional)* A secure key if you want to enable anchor node registrations via `POST /api/v8/nodes/register`.
