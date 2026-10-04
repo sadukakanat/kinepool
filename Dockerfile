@@ -1,24 +1,37 @@
+# Use an official Python runtime as a parent image
 FROM python:3.12-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
-WORKDIR /app
-
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential libpq-dev \
+# Install system dependencies if required (e.g., build-essential, libpq-dev)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
-# Automatically fix Windows line endings (CRLF -> LF) if the file was edited on Windows
-RUN sed -i 's/\r$//' requirements.txt
+# 1. Create a non-root user and group
+RUN groupadd -r appuser && useradd -r -g appuser -d /home/appuser -m -s /bin/bash appuser
 
-RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
+# Set environment variables for the non-root user
+ENV HOME=/home/appuser
+ENV PATH="/home/appuser/.local/bin:$PATH"
 
-# Flat layout: app code and HTML pages live side by side in /app
-COPY *.py ./
-COPY index.html register.html asset-register.html explorer.html ./
+# Set the working directory inside the container
+WORKDIR /app
 
-RUN useradd --create-home appuser && chown -R appuser /app
+# Copy requirements.txt first and ensure proper ownership for the non-root user
+COPY --chown=appuser:appuser requirements.txt .
+
+# 2. Switch to the non-root user
 USER appuser
 
-EXPOSE 8000
-# Render supplies $PORT; --proxy-headers makes request.client.host the real client IP
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips='*'"]
+# 3. Install Python dependencies locally into the user directory
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application code with proper ownership
+COPY --chown=appuser:appuser . .
+
+# Expose port (if applicable, e.g., for Flask/FastAPI)
+# EXPOSE 8000
+
+# Run the application
+CMD ["python", "main.py"]
