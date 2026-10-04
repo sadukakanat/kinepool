@@ -7,6 +7,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends build-essential
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
+# Automatically fix Windows line endings (CRLF -> LF) if the file was edited on Windows
+RUN sed -i 's/\r$//' requirements.txt
+
 RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
 # Flat layout: app code and HTML pages live side by side in /app
