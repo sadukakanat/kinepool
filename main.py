@@ -275,3 +275,10 @@ async def page(page: str):
     if page not in PAGES:          # whitelist: never expose .py files, Dockerfile, etc.
         raise HTTPException(404, "Not found")
     return FileResponse(BASE_DIR / page, media_type="text/html")
+import os
+import uvicorn
+
+if __name__ == "__main__":
+  port = int(os.environ.get("PORT", 10000))
+  uvicorn.run("main:app", host="0.0.0.0", port=port)
+    
