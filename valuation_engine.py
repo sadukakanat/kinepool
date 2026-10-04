@@ -71,4 +71,3 @@ class ValuationEngine:
 if __name__ == "__main__":
     s = ValuationEngine().settle(Decimal("50"), Decimal("5"))
     print({k: (fmt_e8(v) if k.endswith("_e8") else v) for k, v in s.items()})
-```[cite: 1]
