@@ -35,3 +35,5 @@ COPY --chown=appuser:appuser . .
 
 # Run the application
 CMD ["python", "main.py"]
+# Run the application using Uvicorn (replace 'app' with your FastAPI instance name if different)
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-10000}"]
