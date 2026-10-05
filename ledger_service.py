@@ -140,8 +140,11 @@ async def mint_settlement(db, terminal, req: dict, rve) -> dict:
         ))
         await db.flush()   # measurement row must exist before the settlement FK
         settlement = DBSettlement(
-            composite_kuts_id=composite_id, measurement_id=packet["measurement_id"],
-            audit_trail=audit, prev_hash=prev_hash, entry_hash=e_hash, **fields)
+            audit_trail=audit,
+            prev_hash=prev_hash,
+            entry_hash=e_hash,
+            **fields
+        )
         db.add(settlement)
 
         try:
@@ -172,3 +175,4 @@ async def verify_ledger(db, limit: int = 100_000) -> dict:
         "prev_hash": r.prev_hash, "entry_hash": r.entry_hash,
     } for r in rows]
     return integrity.verify_chain(entries)
+    
