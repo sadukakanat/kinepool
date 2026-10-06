@@ -42,3 +42,27 @@ class DBSettlement(Base):
     amount: Mapped[float] = mapped_column(Float)
     status: Mapped[str] = mapped_column(String(20), default="PENDING")
     created_at: Mapped[int] = mapped_column(BigInteger)
+
+
+class DBNodeRegistry(Base):
+    """Tracks registered nodes in the network."""
+
+    __tablename__ = "node_registry"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    node_id: Mapped[str] = mapped_column(String(10), unique=True, index=True)
+    node_name: Mapped[str] = mapped_column(String(100))
+    status: Mapped[str] = mapped_column(String(20), default="ACTIVE")
+    registered_at: Mapped[int] = mapped_column(BigInteger)
+
+
+class DBTerminal(Base):
+    """Tracks connected terminals/clients per node."""
+
+    __tablename__ = "terminals"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    terminal_id: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    node_id: Mapped[str] = mapped_column(String(10), index=True)
+    status: Mapped[str] = mapped_column(String(20), default="ONLINE")
+    last_seen: Mapped[int] = mapped_column(BigInteger)
