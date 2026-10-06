@@ -1,10 +1,4 @@
 """
-Kinepool ledger integrity: hash-chained, append-only settlement records.
-
-Each entry's hash covers its own fields plus the previous entry's hash, so
-altering or deleting any past record breaks every later hash and is detectable
-via verify_chain(). (Database triggers additionally reject UPDATE/DELETE.)
-"""
 
 import hashlib
 import json
