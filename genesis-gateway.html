@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genesis Gateway | KUTS Knowledge Ecosystem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { background-color: #030712; color: #f1f5f9; font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'Share Tech Mono', monospace; }
+        .glow-blue { box-shadow: 0 0 35px rgba(59, 130, 246, 0.12); border-color: rgba(59, 130, 246, 0.3); }
+        .glass-panel { background: rgba(13, 20, 32, 0.75); backdrop-filter: blur(16px); }
+        .tabular-clock {
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.05em;
+            display: inline-block;
+            min-width: 260px; 
+        }
+
+        /* KUTS Universal Domain Footer Styles */
+        .kuts-domain-footer {
+            width: 100%;
+            background: rgba(7, 11, 18, 0.95);
+            border-top: 1px solid #1e2a3a;
+            padding: 20px 24px 14px;
+            margin-top: auto;
+            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            color: #91a1b8;
+            z-index: 50;
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #edf4ff;
+        }
+        .footer-brand strong { letter-spacing: 0.05em; }
+        .footer-brand small {
+            color: #687a93;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border-left: 1px solid #1e2a3a;
+            padding-left: 8px;
+        }
+        .brand-dot {
+            width: 6px;
+            height: 6px;
+            background: #35d39a;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #35d39a;
+        }
+        .domain-nav {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+        }
+        .domain-link {
+            color: #91a1b8;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+        .domain-link:hover { color: #61a5ff; text-decoration: underline; }
+        .divider { color: #2a3b51; font-size: 10px; }
+        .footer-subnav {
+            max-width: 1200px;
+            margin: 16px auto 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+        }
+        .sub-link {
+            color: #91a1b8;
+            font-weight: bold;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+        .sub-link:hover { color: #38bdf8; }
+        .sub-divider { color: #0284c7; }
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 14px auto 0;
+            padding-top: 10px;
+            border-top: 1px solid rgba(30, 42, 58, 0.5);
+            text-align: center;
+            font-size: 10px;
+            color: #5f7088;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        @media (max-width: 768px) {
+            .footer-container { flex-direction: column; align-items: flex-start; }
+            .domain-nav { gap: 8px; }
+            .divider { display: none; }
+            .domain-link {
+                background: #0d1420;
+                border: 1px solid #1e2a3a;
+                padding: 4px 8px;
+                border-radius: 6px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
+
+    <!-- TOP SYSTEM TELEMETRY NAVBAR -->
+    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center font-mono font-black text-lg shadow-lg shadow-blue-500/20">Ω</div>
+                <div>
+                    <h1 class="text-sm font-mono font-bold tracking-widest text-blue-400 uppercase">KUTS_GENESIS_GATEWAY</h1>
+                    <p class="text-[0.6rem] font-mono text-slate-500 uppercase tracking-wider">Anchor: THRINC000 // Origin Node Active[cite: 3]</p>
+                </div>
+            </div>
+
+            <!-- LIVE TEMPORAL CLOCK WIDGET -->
+            <div class="bg-black/60 border border-slate-800 px-4 py-1.5 rounded-xl text-center">
+                <span class="text-[0.55rem] font-mono text-slate-500 uppercase block tracking-widest">Master Temporal Pulse (Session-Epoch)</span>
+                <span id="live-temporal-clock" class="text-xs font-mono text-blue-400 font-bold tabular-clock">
+                    (+00):0130.05.26.04.18.17.45.12.00.00
+                </span>
+            </div>
+
+            <nav class="flex items-center gap-4 text-[0.7rem] font-mono uppercase tracking-widest text-slate-400">
+                <span class="text-emerald-400 flex items-center gap-1.5 bg-emerald-950/40 px-2.5 py-1 rounded border border-emerald-900/40">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> SYNCED
+                </span>
+                <a href="browser-genesis.html" class="hover:text-blue-400 transition">Mission Control</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="relative px-6 pt-12 pb-8 max-w-5xl mx-auto text-center">
+        <div class="inline-block px-3 py-1 rounded-full bg-blue-950/60 border border-blue-800/40 text-blue-400 font-mono text-xs uppercase tracking-widest mb-4">
+            Research & Integration Layer // Revision 4
+        </div>
+        <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-100 mb-4 font-mono">
+            Enter the Gateway to the <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">KUTS Knowledge Ecosystem</span>
+        </h2>
+        <p class="text-slate-400 text-sm max-w-2xl mx-auto leading-relaxed">
+            Select your specialized operational environment or configure research sandbox parameters below[cite: 1].
+        </p>
+    </section>
+
+    <!-- RESEARCH SANDBOX PARAMETERS PANEL -->
+    <section class="max-w-7xl mx-auto px-6 w-full mb-10">
+        <div class="glass-panel border border-slate-800 rounded-2xl p-5">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-2 font-mono text-xs text-blue-400 uppercase tracking-widest font-bold">
+                    <span>⚡ Research Sandbox Parameters</span>
+                </div>
+                <button onclick="toggleSandbox()" class="text-xs font-mono text-slate-400 hover:text-white underline">Toggle Console</button>
+            </div>
+            
+            <div id="sandbox-content" class="grid grid-cols-1 md:grid-cols-4 gap-4 font-mono text-xs">
+                <div>
+                    <label class="block text-slate-500 text-[0.6rem] mb-1">LIGHT-VELOCITY CONSTANT ($c$)</label>
+                    <input type="text" readonly value="299,792,458 m/s" class="w-full bg-black/50 border border-slate-800 p-2 rounded text-blue-300">
+                </div>
+                <div>
+                    <label class="block text-slate-500 text-[0.6rem] mb-1">ACTIVE SCALE RESOLUTION</label>
+                    <select id="sandbox-scale" class="w-full bg-black border border-slate-800 p-2 rounded text-slate-200" onchange="updateSandboxMetrics()">
+                        <option value="BE">Base-Epoch (333.56 ns)</option>
+                        <option value="GE">Giga-Epoch (9.27 Hours)</option>
+                        <option value="TE">Tera-Epoch (38.66 Days)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-slate-500 text-[0.6rem] mb-1">ANCHOR NODE TARGET</label>
+                    <input type="text" id="sandbox-node" readonly value="THRINC000 [10.4932 N]" class="w-full bg-black/50 border border-slate-800 p-2 rounded text-emerald-400">
+                </div>
+                <div class="flex items-end">
+                    <button onclick="runSandboxSimulation()" class="w-full py-2 bg-blue-900/60 hover:bg-blue-600 border border-blue-700/50 text-white font-bold rounded transition uppercase tracking-wider text-[0.65rem]">Execute Sync Pulse</button>
+                </div>
+            </div>
+            <div id="sandbox-log" class="mt-3 text-[11px] font-mono text-slate-500 hidden bg-black/40 p-2.5 rounded border border-slate-900">
+                [Sandbox Status]: Ready for parameter injection. Light-travel distance matrix stable.
+            </div>
+        </div>
+    </section>
+
+    <!-- PORTAL SELECTOR GRID -->
+    <main class="max-w-7xl mx-auto px-6 w-full flex-1 pb-16">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+            <!-- CAMPUS PORTAL -->
+            <div class="glass-panel border border-slate-800 rounded-2xl p-6 transition-all duration-300 hover:border-slate-700 flex flex-col justify-between group shadow-xl">
+                <div>
+                    <div class="w-12 h-12 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">🎓</div>
+                    <span class="text-[0.65rem] font-mono text-blue-400 uppercase tracking-widest">Portal 01 // Education</span>
+                    <h3 class="text-lg font-bold text-slate-100 font-mono mt-1 mb-3">Learning Campus</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-6">
+                        Complete digital university environment for scholars, academic researchers, and lifelong learners exploring advanced metric chronometry.
+                    </p>
+                    <ul class="space-y-2.5 font-mono text-xs text-slate-300 mb-8 border-t border-slate-800/80 pt-4">
+                        <li class="flex items-center gap-2"><span class="text-blue-400">›</span> Knowledge Library & Archives</li>
+                        <li class="flex items-center gap-2"><span class="text-blue-400">›</span> Academy Curriculums & Sandbox</li>
+                        <li class="flex items-center gap-2"><span class="text-blue-400">›</span> Research Resource Nodes</li>
+                    </ul>
+                </div>
+                <a href="academy.html" class="w-full py-3 bg-slate-800 hover:bg-blue-600 hover:text-white border border-slate-700 rounded-xl font-mono text-xs font-bold uppercase tracking-widest text-center transition shadow-md">
+                    Enter Campus →
+                </a>
+            </div>
+
+            <!-- INDUSTRY HUB (FEATURED CORE) -->
+            <div class="glass-panel border border-blue-500/40 glow-blue rounded-2xl p-6 transition-all duration-300 hover:border-blue-400 flex flex-col justify-between group shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-blue-600 text-white font-mono text-[9px] px-3 py-1 rounded-bl-xl font-bold uppercase tracking-widest">
+                    Primary Engine
+                </div>
+                <div>
+                    <div class="w-12 h-12 rounded-xl bg-blue-950/80 border border-blue-800/60 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">🏭</div>
+                    <span class="text-[0.65rem] font-mono text-blue-400 uppercase tracking-widest">Portal 02 // Operations</span>
+                    <h3 class="text-lg font-bold text-slate-100 font-mono mt-1 mb-3">Industry Hub</h3>
+                    <p class="text-slate-300 text-xs leading-relaxed mb-6">
+                        Practical engineering modules, structural compliance engines, node wallet ledgers, and multi-party venture escrow execution matrices[cite: 2].
+                    </p>
+                    <ul class="space-y-2.5 font-mono text-xs text-slate-200 mb-8 border-t border-slate-800/80 pt-4">
+                        <li class="flex items-center gap-2"><span class="text-blue-400">›</span> Treasury Core & Account Ledger[cite: 2]</li>
+                        <li class="flex items-center gap-2"><span class="text-blue-400">›</span> Constitutional Compliance Suite[cite: 2]</li>
+                        <li class="flex items-center gap-2"><span class="text-blue-400">›</span> Supply-Chain Freight Router[cite: 2]</li>
+                    </ul>
+                </div>
+                <a href="browser-genesis.html" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-mono text-xs font-bold uppercase tracking-widest text-center transition shadow-lg shadow-blue-600/30">
+                    Enter Industry Hub →
+                </a>
+            </div>
+
+            <!-- GLOBAL COLLABORATION NETWORK -->
+            <div class="glass-panel border border-slate-800 rounded-2xl p-6 transition-all duration-300 hover:border-slate-700 flex flex-col justify-between group shadow-xl">
+                <div>
+                    <div class="w-12 h-12 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center text-2xl mb-5 group-hover:scale-110 transition-transform">🌍</div>
+                    <span class="text-[0.65rem] font-mono text-indigo-400 uppercase tracking-widest">Portal 03 // Network</span>
+                    <h3 class="text-lg font-bold text-slate-100 font-mono mt-1 mb-3">Global Collaboration</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-6">
+                        Decentralized synchronization connecting international anchor nodes, independent contributors, and regional knowledge syndicates.
+                    </p>
+                    <ul class="space-y-2.5 font-mono text-xs text-slate-300 mb-8 border-t border-slate-800/80 pt-4">
+                        <li class="flex items-center gap-2"><span class="text-indigo-400">›</span> Global Node Directory (34+ Anchor Nodes)[cite: 2]</li>
+                        <li class="flex items-center gap-2"><span class="text-indigo-400">›</span> Reputation Oracle Matrices[cite: 2]</li>
+                        <li class="flex items-center gap-2"><span class="text-indigo-400">›</span> Decentralized Community Layer[cite: 2]</li>
+                    </ul>
+                </div>
+                <a href="global-nodes.html" class="w-full py-3 bg-slate-800 hover:bg-indigo-600 hover:text-white border border-slate-700 rounded-xl font-mono text-xs font-bold uppercase tracking-widest text-center transition shadow-md">
+                    Join Network →
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- KUTS UNIVERSAL DOMAIN FOOTER -->
+    <footer class="kuts-domain-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <span class="brand-dot"></span>
+                <strong>KUTS Ecosystem</strong>
+                <small>Global Navigation Matrix</small>
+            </div>
+            <nav class="domain-nav" aria-label="System Domains">
+                <a href="KUTS-Module-Menu.html" class="domain-link">Core & Gateways</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="browser-genesis.html" class="domain-link">Browser Genesis</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="academy.html" class="domain-link">Training</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="genesis-gateway.html" class="domain-link font-bold text-blue-400">Research & Integration</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="treasury-core.html" class="domain-link">Kine Treasury</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="my-task.html" class="domain-link">My Task</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="index.html" class="domain-link">Tools</a>
+            </nav>
+        </div>
+
+        <div class="footer-subnav">
+            <a href="entity-registry.html" class="sub-link">Entity Registry</a>
+            <span class="sub-divider">|</span>
+            <a href="my-task.html" class="sub-link">Worker Task Workspace</a>
+            <span class="sub-divider">|</span>
+            <a href="referrals.html" class="sub-link">Referral Hub</a>
+            <span class="sub-divider">|</span>
+            <a href="ai-assistant.html" class="sub-link">AI Assistant Node</a>
+            <span class="sub-divider">|</span>
+            <a href="SEARCH-LAYER.html" class="sub-link">Search Layer</a>
+            <span class="sub-divider">|</span>
+            <a href="kine-production-engine/index.html" class="sub-link">Kine Production Engine</a>
+            <span class="sub-divider">|</span>
+            <a href="kuts-chronometry-suite/index.html" class="sub-link">KUTS Chronometry Suite</a>
+            <span class="sub-divider">|</span>
+            <a href="carbon-credit-marketplace.html" class="sub-link">Carbon Market</a>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 PINALEAF ADVANCEMENTS LLP // KUTS GEODESIC MESH // ORIGIN: THRINC000 // AAROHAN 2050</p>
+        </div>
+    </footer>
+
+    <!-- INTERACTION LOGIC -->
+    <script>
+        setInterval(() => {
+            const now = new Date();
+            const ms = String(now.getMilliseconds()).padStart(3, '0');
+            const nsTick = Math.floor(Math.random() * 99);
+            const clockString = `(+00):0130.05.26.04.18.17.${ms.slice(0,2)}.${ms.slice(2)}${nsTick}.00`;
+            const clockEl = document.getElementById('live-temporal-clock');
+            if(clockEl) clockEl.innerText = clockString;
+        }, 33);
+
+        function toggleSandbox() {
+            const content = document.getElementById('sandbox-content');
+            content.classList.toggle('hidden');
+        }
+
+        function updateSandboxMetrics() {
+            const scale = document.getElementById('sandbox-scale').value;
+            const log = document.getElementById('sandbox-log');
+            log.classList.remove('hidden');
+            log.innerHTML = `<span class="text-blue-400 font-bold">[PARAMETER SHIFT]:</span> Active scale locked to <span class="text-white">${scale}</span>. Light-distance multiplier adjusted successfully.`;
+        }
+
+        function runSandboxSimulation() {
+            const log = document.getElementById('sandbox-log');
+            log.classList.remove('hidden');
+            log.innerHTML = `<span class="text-emerald-400 font-bold">[SYNC SUCCESS]:</span> Master Origin Anchor <span class="text-white">THRINC000</span> verified zero drift against light constant ($c$). Pulse committed.`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KUTS Industry Hub | Treasury Core & Liquidity Ledger</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="core/auth-bridge.js"></script>
+    <script src="core/kuts-core-bridge.js"></script>
+    <script src="core/kuts-economics.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #030712; color: #f1f5f9; font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'Share Tech Mono', monospace; }
+        .glass-panel { background: rgba(13, 20, 32, 0.85); backdrop-filter: blur(16px); }
+        .glow-emerald { box-shadow: 0 0 35px rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.3); }
+        .tabular-nums { font-variant-numeric: tabular-nums; }
+
+        /* KUTS Universal Domain Footer Styles */
+        .kuts-domain-footer {
+            width: 100%;
+            background: rgba(7, 11, 18, 0.95);
+            border-top: 1px solid #1e2a3a;
+            padding: 20px 24px 14px;
+            margin-top: auto;
+            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            color: #91a1b8;
+            z-index: 50;
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #edf4ff;
+        }
+        .footer-brand strong { letter-spacing: 0.05em; }
+        .footer-brand small {
+            color: #687a93;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border-left: 1px solid #1e2a3a;
+            padding-left: 8px;
+        }
+        .brand-dot {
+            width: 6px;
+            height: 6px;
+            background: #35d39a;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #35d39a;
+        }
+        .domain-nav {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+        }
+        .domain-link {
+            color: #91a1b8;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+        .domain-link:hover { color: #61a5ff; text-decoration: underline; }
+        .divider { color: #2a3b51; font-size: 10px; }
+        .footer-subnav {
+            max-width: 1200px;
+            margin: 16px auto 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+        }
+        .sub-link {
+            color: #91a1b8;
+            font-weight: bold;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+        .sub-link:hover { color: #38bdf8; }
+        .sub-divider { color: #0284c7; }
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 14px auto 0;
+            padding-top: 10px;
+            border-top: 1px solid rgba(30, 42, 58, 0.5);
+            text-align: center;
+            font-size: 10px;
+            color: #5f7088;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-emerald-500 selection:text-white">
+
+    <!-- TOP TELEMETRY NAVBAR -->
+    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-600 flex items-center justify-center font-mono font-black text-lg shadow-lg shadow-emerald-500/20">⚖</div>
+                <div>
+                    <h1 class="text-sm font-mono font-bold tracking-widest text-emerald-400 uppercase">KUTS_TREASURY_CORE</h1>
+                    <p class="text-[0.6rem] font-mono text-slate-500 uppercase tracking-wider">Macro Reserve // MDI6000 Funding Engine</p>
+                </div>
+            </div>
+            <nav class="flex items-center gap-4 text-[0.7rem] font-mono uppercase tracking-widest text-slate-400">
+                <a href="dashboard.html" class="hover:text-emerald-400 transition">Command Center</a>
+                <span class="text-emerald-400 flex items-center gap-1.5 bg-emerald-950/40 px-2.5 py-1 rounded border border-emerald-900/40">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> LEDGER SECURE
+                </span>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN TREASURY CONTENT -->
+    <main class="max-w-7xl mx-auto px-6 py-8 flex-1 w-full space-y-6">
+        
+        <!-- TOP METRICS GRID -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 font-mono">
+            <div class="glass-panel border border-slate-800 rounded-2xl p-5 glow-emerald">
+                <span class="text-[0.6rem] text-slate-500 uppercase tracking-wider block mb-1">Total Treasury Reserves</span>
+                <span class="text-2xl font-bold text-emerald-400 tabular-nums">45,850.00 Ꝃ</span>
+                <span class="text-[0.55rem] text-emerald-400 block mt-1">Backed by verified resource blocks</span>
+            </div>
+            <div class="glass-panel border border-slate-800 rounded-2xl p-5">
+                <span class="text-[0.6rem] text-slate-500 uppercase tracking-wider block mb-1">Macro Dynes ($O$)</span>
+                <span class="text-2xl font-bold text-blue-400 tabular-nums">458.50 $\mathbb{O}$</span>
+                <span class="text-[0.55rem] text-slate-600 block mt-1">1 Dyne ($O$) = 100 Kines ($L$)</span>
+            </div>
+            <div class="glass-panel border border-slate-800 rounded-2xl p-5">
+                <span class="text-[0.6rem] text-slate-500 uppercase tracking-wider block mb-1">Protocol Fiscal Sweep (PFS) Pool</span>
+                <span class="text-2xl font-bold text-amber-400 tabular-nums">687.75 Ꝃ</span>
+                <span class="text-[0.55rem] text-slate-600 block mt-1">1.5% maintenance reserve</span>
+            </div>
+            <div class="glass-panel border border-slate-800 rounded-2xl p-5">
+                <span class="text-[0.6rem] text-slate-500 uppercase tracking-wider block mb-1">Regenerative Pool (RSP)</span>
+                <span class="text-2xl font-bold text-teal-400 tabular-nums">687.75 Ꝃ</span>
+                <span class="text-[0.55rem] text-slate-600 block mt-1">1.5% community & environmental fund</span>
+            </div>
+        </div>
+
+        <!-- SECONDARY PANELS -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- TREASURY LEDGER STREAM -->
+            <div class="lg:col-span-8 glass-panel border border-slate-800 rounded-2xl p-6 font-mono">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                    <h2 class="text-xs font-bold text-slate-200 uppercase tracking-widest">Macro Settlement Allocations</h2>
+                    <span class="text-[0.6rem] text-slate-500">Category 12 Ledger</span>
+                </div>
+                <div class="space-y-3 text-xs">
+                    <div class="p-3 bg-black/40 border border-slate-800 rounded-xl flex justify-between items-center">
+                        <div>
+                            <span class="text-emerald-400 font-bold block">MDI6000 Infrastructure Capital Injection</span>
+                            <span class="text-[0.6rem] text-slate-500">Allocation routed to anchor node expansion</span>
+                        </div>
+                        <span class="text-blue-400 font-bold">150.00 $\mathbb{O}$</span>
+                    </div>
+                    <div class="p-3 bg-black/40 border border-slate-800 rounded-xl flex justify-between items-center">
+                        <div>
+                            <span class="text-teal-400 font-bold block">Regenerative Stewardship Pool (RSP) Disbursement</span>
+                            <span class="text-[0.6rem] text-slate-500">Community environmental development grant</span>
+                        </div>
+                        <span class="text-emerald-400 font-bold">+25.0000 Ꝃ</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VALUATION & FLOOR RATE METRICS -->
+            <div class="lg:col-span-4 glass-panel border border-slate-800 rounded-2xl p-6 font-mono flex flex-col justify-between">
+                <div>
+                    <h2 class="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-4 border-b border-slate-800 pb-3">Valuation Parameters</h2>
+                    <ul class="space-y-3 text-xs text-slate-300">
+                        <li class="flex justify-between">
+                            <span class="text-slate-500">Baseline Energy ($E_{\text{base}}$):</span>
+                            <span class="text-slate-200">10.0 kWh</span>
+                        </li>
+                        <li class="flex justify-between">
+                            <span class="text-slate-500">Baseline Compute ($C_{\text{base}}$):</span>
+                            <span class="text-slate-200">0.1M Tokens</span>
+                        </li>
+                        <li class="flex justify-between">
+                            <span class="text-slate-500">Hard Floor Rate:</span>
+                            <span class="text-amber-300 font-bold">₹100.00 / Ꝃ</span>
+                        </li>
+                        <li class="flex justify-between">
+                            <span class="text-slate-500">Governance Split:</span>
+                            <span class="text-emerald-400 font-bold">3.0% Total (1.5% + 1.5%)</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-800">
+                    <a href="dashboard.html" class="w-full block py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-center font-bold uppercase tracking-wider text-[0.65rem] transition">
+                        ← Back to Command Center
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- KUTS UNIVERSAL DOMAIN FOOTER -->
+    <footer class="kuts-domain-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <span class="brand-dot"></span>
+                <strong>KUTS Ecosystem</strong>
+                <small>Global Navigation Matrix</small>
+            </div>
+            <nav class="domain-nav" aria-label="System Domains">
+                <a href="KUTS-Module-Menu.html" class="domain-link">Core & Gateways</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="browser-genesis.html" class="domain-link">Browser Genesis</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="treasury-core.html" class="domain-link font-bold text-emerald-400">Treasury Core</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="genesis-gateway.html" class="domain-link">Research & Integration</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="dashboard.html" class="domain-link">Industry Dashboard</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="my-task.html" class="domain-link">My Task</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="index.html" class="domain-link">Tools</a>
+            </nav>
+        </div>
+
+        <div class="footer-subnav">
+            <a href="entity-registry.html" class="sub-link">Entity Registry</a>
+            <span class="sub-divider">|</span>
+            <a href="my-task.html" class="sub-link">Worker Task Workspace</a>
+            <span class="sub-divider">|</span>
+            <a href="referrals.html" class="sub-link">Referral Hub</a>
+            <span class="sub-divider">|</span>
+            <a href="ai-assistant.html" class="sub-link">AI Assistant Node</a>
+            <span class="sub-divider">|</span>
+            <a href="SEARCH-LAYER.html" class="sub-link">Search Layer</a>
+            <span class="sub-divider">|</span>
+            <a href="kine-production-engine/index.html" class="sub-link">Kine Production Engine</a>
+            <span class="sub-divider">|</span>
+            <a href="kuts-chronometry-suite/index.html" class="sub-link">KUTS Chronometry Suite</a>
+            <span class="sub-divider">|</span>
+            <a href="carbon-credit-marketplace.html" class="sub-link">Carbon Market</a>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 PINALEAF ADVANCEMENTS LLP // KUTS GEODESIC MESH // ORIGIN: THRINC000 // AAROHAN 2050</p>
+        </div>
+    </footer>
+
+</body>
+</html>

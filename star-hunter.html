@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KUTS Training | Star Hunting Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght=300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #020617; color: #cbd5e1; font-family: 'Inter', sans-serif; overflow: hidden; }
+        .font-mono { font-family: 'Share Tech Mono', monospace; }
+        .glow-amber { box-shadow: 0 0 25px rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.3); }
+        canvas { background: radial-gradient(circle at center, #070f2e 0%, #020617 100%); }
+    </style>
+</head>
+<body class="w-screen h-screen flex flex-col p-4 md:p-6 relative select-none">
+<!-- KUTS GLOBAL PLATFORM NAVIGATION BAR -->
+<div style="width: 100%; background: #0f172a; border-bottom: 1px solid #1e293b; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; font-family: monospace; font-size: 12px; z-index: 9999; position: relative;">
+    <div style="color: #60a5fa; font-weight: bold; tracking-spacing: 1px;">KUTS // LANDING: SANDBOX SIMULATOR</div>
+    <div style="display: flex; gap: 15px;">
+        <a href="./browser-genesis.html" style="color: #34d399; text-decoration: none; border: 1px solid #065f46; padding: 4px 10px; border-radius: 4px; transition: all 0.2s;">📡 Core Dashboard</a>
+        <!-- To link to the full 4x4x4 menu directory, we can save our previous menu design as menu.html -->
+        <a href="./menu.html" style="color: #c084fc; text-decoration: none; border: 1px solid #6b21a8; padding: 4px 10px; border-radius: 4px; transition: all 0.2s;">🏢 System Menu</a>
+    </div>
+</div>
+
+    <header class="w-full max-w-6xl mx-auto border border-amber-900/40 bg-slate-900/60 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 mb-4 font-mono text-xs backdrop-blur-md z-20">
+        <div>
+            <h1 class="text-base font-bold text-amber-500 tracking-wider">KUTS_STAR_HUNTING_DESK</h1>
+            <p class="text-slate-500 text-[0.6rem] uppercase tracking-wider">Simulation Category 05 // Kinetic Particle Catching Sandbox Matrix</p>
+        </div>
+        <div class="bg-black/40 border border-slate-800 px-4 py-1.5 rounded-lg text-center min-w-[240px]">
+            <span class="text-slate-500 block text-[0.55rem] uppercase font-bold tracking-widest">Temporal Clock Matrix</span>
+            <span id="star-clock" class="text-amber-400 font-bold text-[0.7rem] tracking-wider block mt-0.5">0000.00.00.00.00.00.00.00</span>
+        </div>
+    </header>
+
+    <main class="w-full max-w-6xl mx-auto flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch min-h-0 z-20">
+        
+        <section class="lg:col-span-8 bg-black border border-slate-800 rounded-xl relative overflow-hidden flex flex-col min-h-[300px]">
+            <div class="absolute top-3 left-3 z-30 font-mono text-[0.6rem] text-amber-500 bg-black/70 px-2 py-0.5 rounded border border-amber-900/30 flex items-center gap-2">
+                <span>⚡ SPACE VECTOR: CLICK/TAP TARGET GLOW PARTICLES</span>
+                <span id="speed-badge" class="bg-red-950 text-red-400 border border-red-800/60 px-1.5 py-0.2 rounded font-bold animate-pulse text-[0.55rem]">VELOCITY: 1.0x</span>
+            </div>
+            <canvas id="universe-canvas" class="w-full flex-1 cursor-crosshair rounded-xl"></canvas>
+        </section>
+
+        <section class="lg:col-span-4 flex flex-col gap-4 justify-between h-full">
+            <div class="bg-slate-900/40 border border-slate-800/80 rounded-xl p-4 flex flex-col glow-amber backdrop-blur-sm font-mono text-xs flex-1 justify-between">
+                
+                <div class="space-y-4">
+                    <h2 class="text-xs text-amber-500 font-bold tracking-widest uppercase border-b border-slate-800 pb-2">Node Harvest Metrics</h2>
+                    
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="bg-black/40 border border-slate-900 p-3 rounded-lg text-center">
+                            <span class="text-[0.55rem] text-slate-500 block uppercase font-bold">Flux Captured</span>
+                            <span id="score-flux" class="text-cyan-400 font-bold text-lg mt-0.5 block">0 ƒ</span>
+                        </div>
+                        <div class="bg-black/40 border border-slate-900 p-3 rounded-lg text-center">
+                            <span class="text-[0.55rem] text-slate-500 block uppercase font-bold">Kine Equiv (Ꝃ)</span>
+                            <span id="score-kine" class="text-emerald-400 font-bold text-lg mt-0.5 block">0.0000 Ꝃ</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-black/60 border border-slate-900 rounded-lg p-3 h-[180px] overflow-y-auto flex flex-col gap-1.5 text-[0.6rem] leading-relaxed text-slate-400">
+                        <div class="text-slate-500 italic text-center py-8" id="placeholder-log">// Awaiting kinetic star intercept handshakes...</div>
+                        <div id="star-logs-feed" class="space-y-1.5"></div>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-slate-900 space-y-2">
+                    <div class="text-[0.55rem] text-slate-500 uppercase leading-relaxed font-sans">
+                        <strong>Acceleration Engine Active:</strong> The matrix monitors your localized yield. Every <strong>100 Ꝃ</strong> ($10,000\mathbf{ƒ}$) gained increases particle velocity vectors by <strong>+0.5x</strong>.
+                    </div>
+                    <button onclick="commitHarvestToWallet()" class="w-full bg-amber-950/60 hover:bg-amber-900/80 border border-amber-700 text-amber-300 py-2.5 rounded uppercase tracking-widest font-bold text-[0.65rem] transition-all">
+                        Commit Pulses to Wallet
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <nav class="w-full max-w-6xl mx-auto mt-4 grid grid-cols-2 sm:grid-cols-5 gap-2 font-mono text-[0.65rem] text-slate-400 shrink-0 z-20">
+        <a href="./dashboard.html" class="bg-slate-950 border border-slate-900 hover:border-purple-900/60 p-2 rounded text-center transition-colors">➔ Dashboard</a>
+        <a href="./my-task.html" class="bg-slate-950 border border-slate-900 hover:border-purple-900/60 p-2 rounded text-center transition-colors">➔ Task Desk</a>
+        <a href="./account.html" class="bg-slate-950 border border-slate-900 hover:border-purple-900/60 p-2 rounded text-center transition-colors">➔ Wallet Ledger</a>
+        <a href="./game.html" class="bg-slate-950 border border-slate-900 hover:border-blue-900/60 p-2 rounded text-center transition-colors">➔ Core Runner</a>
+        <a href="./repayment-engine.html" class="bg-slate-950 border border-slate-900 hover:border-orange-900/60 p-2 rounded text-center transition-colors">➔ Sweep Matrix</a>
+    </nav>
+
+    <script src="./core/kuts-core-bridge.js"></script>
+    <script>
+        const canvas = document.getElementById('universe-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let totalAccumulatedFlux = 0;
+        let starArray = [];
+        let currentVelocityMultiplier = 1.0;
+        const MAX_STARS = 15;
+
+        function runSimulationClock() {
+            setInterval(() => {
+                const now = new Date();
+                const tickString = `(+00):0130.05.26.04.${now.getDate().toString().padStart(2,'0')}.${now.getHours().toString().padStart(2,'0')}.${now.getMinutes().toString().padStart(2,'0')}.${now.getSeconds().toString().padStart(2,'0')}.${Math.floor(now.getMilliseconds()/3).toString().padStart(3,'0')}`;
+                document.getElementById('star-clock').innerText = tickString;
+            }, 33);
+        }
+
+        function resizeSimulationCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+
+        class InvariantStar {
+            constructor() {
+                this.reset();
+                this.y = Math.random() * canvas.height;
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = -20;
+                this.radius = 4 + Math.random() * 6;
+                // Baseline speed scales with the globally updated velocity variable
+                this.baseSpeedY = 1 + Math.random() * 2.5;
+                this.baseSpeedX = (Math.random() - 0.5) * 1.5;
+                this.fluxVal = Math.floor(Math.random() * 21);
+            }
+            update() {
+                this.y += this.baseSpeedY * currentVelocityMultiplier;
+                this.x += this.baseSpeedX * currentVelocityMultiplier;
+                if (this.y > canvas.height + 20 || this.x < -20 || this.x > canvas.width + 20) {
+                    this.reset();
+                }
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(245, 158, 11, ${0.4 + (this.fluxVal / 20) * 0.6})`;
+                ctx.shadowBlur = this.radius * 2;
+                ctx.shadowColor = "#f59e0b";
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                
+                ctx.fillStyle = "#cbd5e1";
+                ctx.font = "bold 8px 'Share Tech Mono'";
+                ctx.fillText(`${this.fluxVal}ƒ`, this.x - 6, this.y - this.radius - 4);
+            }
+        }
+
+        function initializeUniverseMesh() {
+            resizeSimulationCanvas();
+            for (let i = 0; i < MAX_STARS; i++) {
+                starArray.push(new InvariantStar());
+            }
+        }
+
+        function loopUniverse() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            starArray.forEach(star => {
+                star.update();
+                star.draw();
+            });
+            requestAnimationFrame(loopUniverse);
+        }
+
+        canvas.addEventListener('mousedown', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+
+            starArray.forEach(star => {
+                const distance = Math.hypot(star.x - clickX, star.y - clickY);
+                if (distance < star.radius + 18) {
+                    executeStarHarvestHandshake(star.fluxVal);
+                    star.reset();
+                }
+            });
+        });
+
+        function executeStarHarvestHandshake(fluxAmount) {
+            if (fluxAmount === 0) return;
+
+            const placeholder = document.getElementById('placeholder-log');
+            if (placeholder) placeholder.style.display = 'none';
+
+            totalAccumulatedFlux += fluxAmount;
+            const computedKineEquivalent = totalAccumulatedFlux / 100;
+
+            // Mathematical calculation of acceleration bounds: +0.5x for every 100 Ꝃ (10,000 Flux)
+            const speedLevelsGained = Math.floor(computedKineEquivalent / 100);
+            currentVelocityMultiplier = 1.0 + (speedLevelsGained * 0.5);
+
+            // Update user HUD parameters
+            document.getElementById('score-flux').innerText = `${totalAccumulatedFlux} ƒ`;
+            document.getElementById('score-kine').innerText = `${computedKineEquivalent.toFixed(4)} Ꝃ`;
+            document.getElementById('speed-badge').innerText = `VELOCITY: ${currentVelocityMultiplier.toFixed(1)}x`;
+
+            const feed = document.getElementById('star-logs-feed');
+            const now = new Date();
+            const logTS = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+
+            const logRow = `
+                <div class="flex justify-between border-b border-slate-900/60 pb-1 text-slate-300 font-mono">
+                    <span class="text-amber-500 font-bold">[CATCH] +${fluxAmount}ƒ Particle</span>
+                    <span class="text-slate-500">${logTS} Ticks</span>
+                </div>
+            `;
+            feed.insertAdjacentHTML('afterbegin', logRow);
+            if (feed.children.length > 6) feed.removeChild(feed.lastChild);
+        }
+
+        function commitHarvestToWallet() {
+            if (totalAccumulatedFlux === 0) {
+                alert("Vault Alert: Collected Flux value allocation pool is zero.");
+                return;
+            }
+            const kineToTransfer = totalAccumulatedFlux / 100;
+            
+            // Route through Layer 03 central script bridge logic
+            KUTS_BRIDGE.executeTransaction("STAR-HUNTER-VECTORS", "NODE-USR-TCR-884", kineToTransfer, "Star Hunter Capture Harvest");
+
+            alert(`Handshake Broadcasted Successfully!\nSuccessfully tokenized ${totalAccumulatedFlux} Flux vectors into +${kineToTransfer.toFixed(4)} Ꝃ assigned directly to your local node wallet account configuration ledger.`);
+            
+            // Clear current simulation stats & reset speeds
+            totalAccumulatedFlux = 0;
+            currentVelocityMultiplier = 1.0;
+            document.getElementById('score-flux').innerText = "0 ƒ";
+            document.getElementById('score-kine').innerText = "0.0000 Ꝃ";
+            document.getElementById('speed-badge').innerText = "VELOCITY: 1.0x";
+            document.getElementById('star-logs-feed').innerHTML = "";
+            document.getElementById('placeholder-log').style.display = 'block';
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            runSimulationClock();
+            initializeUniverseMesh();
+            loopUniverse();
+        });
+        window.addEventListener('resize', resizeSimulationCanvas);
+    </script>
+</body>
+</html>

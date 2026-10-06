@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KUTS Network & Community | Worker Task Workspace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="core/auth-bridge.js"></script>
+    <script src="core/kuts-core-bridge.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #030712; color: #f1f5f9; font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'Share Tech Mono', monospace; }
+        .glass-panel { background: rgba(13, 20, 32, 0.85); backdrop-filter: blur(16px); }
+        .glow-cyan { box-shadow: 0 0 35px rgba(6, 182, 212, 0.12); border-color: rgba(6, 182, 212, 0.3); }
+
+        /* KUTS Universal Domain Footer Styles */
+        .kuts-domain-footer {
+            width: 100%;
+            background: rgba(7, 11, 18, 0.95);
+            border-top: 1px solid #1e2a3a;
+            padding: 20px 24px 14px;
+            margin-top: auto;
+            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            color: #91a1b8;
+            z-index: 50;
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #edf4ff;
+        }
+        .footer-brand strong { letter-spacing: 0.05em; }
+        .footer-brand small {
+            color: #687a93;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border-left: 1px solid #1e2a3a;
+            padding-left: 8px;
+        }
+        .brand-dot {
+            width: 6px;
+            height: 6px;
+            background: #35d39a;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #35d39a;
+        }
+        .domain-nav {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+        }
+        .domain-link {
+            color: #91a1b8;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+        .domain-link:hover { color: #61a5ff; text-decoration: underline; }
+        .divider { color: #2a3b51; font-size: 10px; }
+        .footer-subnav {
+            max-width: 1200px;
+            margin: 16px auto 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+        }
+        .sub-link {
+            color: #91a1b8;
+            font-weight: bold;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+        .sub-link:hover { color: #38bdf8; }
+        .sub-divider { color: #0284c7; }
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 14px auto 0;
+            padding-top: 10px;
+            border-top: 1px solid rgba(30, 42, 58, 0.5);
+            text-align: center;
+            font-size: 10px;
+            color: #5f7088;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-cyan-500 selection:text-white">
+
+    <!-- TOP TELEMETRY NAVBAR -->
+    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-600 to-emerald-600 flex items-center justify-center font-mono font-black text-lg shadow-lg shadow-cyan-500/20">📋</div>
+                <div>
+                    <h1 class="text-sm font-mono font-bold tracking-widest text-cyan-400 uppercase">KUTS_WORKER_TASK_WORKSPACE</h1>
+                    <p class="text-[0.6rem] font-mono text-slate-500 uppercase tracking-wider">Group 4 // Operational Task Management</p>
+                </div>
+            </div>
+            <nav class="flex items-center gap-4 text-[0.7rem] font-mono uppercase tracking-widest text-slate-400">
+                <a href="dashboard.html" class="hover:text-cyan-400 transition">Command Center</a>
+                <span class="text-emerald-400 flex items-center gap-1.5 bg-emerald-950/40 px-2.5 py-1 rounded border border-emerald-900/40">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> WORKSPACE SECURE
+                </span>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN TASK WORKSPACE CONTENT -->
+    <main class="max-w-7xl mx-auto px-6 py-8 flex-1 w-full space-y-6">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- NEW TASK INJECTOR -->
+            <div class="lg:col-span-4 glass-panel border border-slate-800 rounded-2xl p-6 font-mono text-xs space-y-4 glow-cyan">
+                <h2 class="text-cyan-400 font-bold uppercase tracking-widest border-b border-slate-800 pb-3">Schedule Operational Task</h2>
+                
+                <form id="task-form" onsubmit="createTask(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-slate-500 text-[0.6rem] mb-1">TASK TITLE / OBJECTIVE</label>
+                        <input type="text" id="task-title" placeholder="e.g. Audit Anchor Node THRINC000" required class="w-full bg-black border border-slate-800 p-2.5 rounded text-slate-200">
+                    </div>
+                    <div>
+                        <label class="block text-slate-500 text-[0.6rem] mb-1">CATEGORY DOMAIN</label>
+                        <select id="task-category" class="w-full bg-black border border-slate-800 p-2.5 rounded text-cyan-300">
+                            <option value="Category 03">Category 03 (Kinetic / Logistics)</option>
+                            <option value="Category 04">Category 04 (Neural / AI Compute)</option>
+                            <option value="Category 12">Category 12 (Fiscal & Governance)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-500 text-[0.6rem] mb-1">ESTIMATED YIELD (Ꝃ)</label>
+                        <input type="number" id="task-reward" value="5.0" step="0.5" min="0.1" required class="w-full bg-black border border-slate-800 p-2.5 rounded text-slate-200">
+                    </div>
+                    <button type="submit" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white py-3 rounded font-bold uppercase tracking-widest transition">
+                        Add to Task Stream >>
+                    </button>
+                </form>
+            </div>
+
+            <!-- ACTIVE TASKS LIST -->
+            <div class="lg:col-span-8 glass-panel border border-slate-800 rounded-2xl p-6 font-mono space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <h2 class="text-slate-200 font-bold uppercase tracking-widest">Operator Task Queue</h2>
+                    <span class="text-[0.6rem] text-slate-500">Live Synchronization</span>
+                </div>
+                
+                <div id="task-stream" class="space-y-3">
+                    <div class="p-4 bg-black/40 border border-slate-800 rounded-xl flex justify-between items-center">
+                        <div class="space-y-1">
+                            <span class="text-cyan-400 font-bold block">Validate P2P Ledger Gossip Packet #8892</span>
+                            <span class="text-[0.6rem] text-slate-500">Category 12 // Assigned to THRINC000</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-emerald-400 font-bold block">2.5000 Ꝃ</span>
+                            <span class="text-[0.55rem] text-amber-400 uppercase">PENDING</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- KUTS UNIVERSAL DOMAIN FOOTER -->
+    <footer class="kuts-domain-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <span class="brand-dot"></span>
+                <strong>KUTS Ecosystem</strong>
+                <small>Global Navigation Matrix</small>
+            </div>
+            <nav class="domain-nav" aria-label="System Domains">
+                <a href="KUTS-Module-Menu.html" class="domain-link">Core & Gateways</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="browser-genesis.html" class="domain-link">Browser Genesis</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="my-task.html" class="domain-link font-bold text-cyan-400">Worker Task Workspace</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="entity-registry.html" class="domain-link">Entity Registry</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="treasury-core.html" class="domain-link">Kine Treasury</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="index.html" class="domain-link">Tools</a>
+            </nav>
+        </div>
+
+        <div class="footer-subnav">
+            <a href="entity-registry.html" class="sub-link">Entity Registry</a>
+            <span class="sub-divider">|</span>
+            <a href="my-task.html" class="sub-link">Worker Task Workspace</a>
+            <span class="sub-divider">|</span>
+            <a href="referrals.html" class="sub-link">Referral Hub</a>
+            <span class="sub-divider">|</span>
+            <a href="ai-assistant.html" class="sub-link">AI Assistant Node</a>
+            <span class="sub-divider">|</span>
+            <a href="SEARCH-LAYER.html" class="sub-link">Search Layer</a>
+            <span class="sub-divider">|</span>
+            <a href="kine-production-engine/index.html" class="sub-link">Kine Production Engine</a>
+            <span class="sub-divider">|</span>
+            <a href="kuts-chronometry-suite/index.html" class="sub-link">KUTS Chronometry Suite</a>
+            <span class="sub-divider">|</span>
+            <a href="carbon-credit-marketplace.html" class="sub-link">Carbon Market</a>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 PINALEAF ADVANCEMENTS LLP // KUTS GEODESIC MESH // ORIGIN: THRINC000 // AAROHAN 2050</p>
+        </div>
+    </footer>
+
+    <script>
+        function createTask(e) {
+            e.preventDefault();
+            const title = document.getElementById('task-title').value;
+            const category = document.getElementById('task-category').value;
+            const reward = parseFloat(document.getElementById('task-reward').value);
+
+            const card = `
+                <div class="p-4 bg-black/40 border border-slate-800 rounded-xl flex justify-between items-center opacity-0 translate-y-1" style="transition: all 0.3s ease;">
+                    <div class="space-y-1">
+                        <span class="text-cyan-400 font-bold block">${title}</span>
+                        <span class="text-[0.6rem] text-slate-500">${category} // Assigned to THRINC000</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-emerald-400 font-bold block">${reward.toFixed(4)} Ꝃ</span>
+                        <span class="text-[0.55rem] text-amber-400 uppercase">ACTIVE</span>
+                    </div>
+                </div>
+            `;
+            const stream = document.getElementById('task-stream');
+            stream.insertAdjacentHTML('afterbegin', card);
+            setTimeout(() => { stream.firstElementChild.style.opacity = '1'; stream.firstElementChild.style.transform = 'translateY(0)'; }, 20);
+            e.target.reset();
+        }
+    </script>
+</body>
+</html>

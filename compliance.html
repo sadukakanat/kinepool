@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KUTS Governance | Constitutional Compliance Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="core/auth-bridge.js"></script>
+    <script src="core/kuts-core-bridge.js"></script>
+    <script src="core/kuts-economics.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #030712; color: #cbd5e1; font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'Share Tech Mono', monospace; }
+        .glow-blue { box-shadow: 0 0 25px rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.25); }
+        .glass-panel { background: rgba(13, 20, 32, 0.85); backdrop-filter: blur(16px); }
+
+        /* KUTS Universal Domain Footer Styles */
+        .kuts-domain-footer {
+            width: 100%;
+            background: rgba(7, 11, 18, 0.95);
+            border-top: 1px solid #1e2a3a;
+            padding: 20px 24px 14px;
+            margin-top: auto;
+            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            color: #91a1b8;
+            z-index: 50;
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #edf4ff;
+        }
+        .footer-brand strong { letter-spacing: 0.05em; }
+        .footer-brand small {
+            color: #687a93;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border-left: 1px solid #1e2a3a;
+            padding-left: 8px;
+        }
+        .brand-dot {
+            width: 6px;
+            height: 6px;
+            background: #35d39a;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #35d39a;
+        }
+        .domain-nav {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+        }
+        .domain-link {
+            color: #91a1b8;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+        .domain-link:hover { color: #61a5ff; text-decoration: underline; }
+        .divider { color: #2a3b51; font-size: 10px; }
+        .footer-subnav {
+            max-width: 1200px;
+            margin: 16px auto 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+        }
+        .sub-link {
+            color: #91a1b8;
+            font-weight: bold;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+        .sub-link:hover { color: #38bdf8; }
+        .sub-divider { color: #0284c7; }
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 14px auto 0;
+            padding-top: 10px;
+            border-top: 1px solid rgba(30, 42, 58, 0.5);
+            text-align: center;
+            font-size: 10px;
+            color: #5f7088;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col p-4 md:p-6 bg-[#030712]">
+
+    <header class="w-full max-w-6xl mx-auto border border-slate-800 bg-slate-900/50 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 font-mono text-xs backdrop-blur-sm">
+        <div>
+            <h1 class="text-base font-bold text-blue-400 tracking-wider">KUTS_CONSTITUTIONAL_COMPLIANCE</h1>
+            <p class="text-slate-500 text-[0.6rem] uppercase tracking-wider">Category 12 // Systemic Auditing Matrix // Dual Allocation Verification[cite: 1, 2]</p>
+        </div>
+        <div class="text-right">
+            <a href="dashboard.html" class="text-blue-400 hover:text-blue-300 underline text-[0.65s] mr-4">← Dashboard</a>
+            <span class="text-blue-400 font-bold bg-blue-950/40 px-2 py-0.5 rounded border border-blue-900/30 text-[0.55rem]">AUDITOR CROSS-SUITE LIVE</span>
+        </div>
+    </header>
+
+    <main class="w-full max-w-6xl mx-auto flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12">
+        
+        <!-- Audit Injector -->
+        <section class="lg:col-span-4 glass-panel border border-slate-800 rounded-xl p-5 glow-blue backdrop-blur-sm">
+            <h2 class="text-xs text-blue-400 font-bold tracking-widest uppercase border-b border-slate-800 pb-3 mb-4 font-mono">Inject Manual Audit Entry</h2>
+            <form id="compliance-injector-form" onsubmit="injectAudit(event)" class="space-y-4 font-mono text-xs">
+                <div>
+                    <label class="block text-slate-500 text-[0.6rem] mb-1">SOURCE NETWORK NODE ID</label>
+                    <input type="text" id="comp-source" value="THRINC000" required class="w-full bg-black border border-slate-800 p-2.5 rounded text-blue-400 font-bold uppercase tracking-wider">
+                </div>
+                <div>
+                    <label class="block text-slate-500 text-[0.6rem] mb-1">GROSS ASSET VALUE (Ꝃ)</label>
+                    <input type="number" id="comp-gross" value="10.0" required min="0.1" step="0.1" class="w-full bg-black border border-slate-800 p-2.5 rounded text-slate-200">
+                </div>
+                <div class="p-2.5 bg-black/50 rounded border border-slate-800 text-[0.55rem] text-slate-400 leading-relaxed">
+                    Triggers 1.5% PFS Sweep & 1.5% RSP Allocation automatically upon entry settlement[cite: 1].
+                </div>
+                <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white py-3 rounded font-bold uppercase tracking-widest text-[0.65rem] transition">Commit Verification Pulse</button>
+            </form>
+        </section>
+
+        <!-- Audit Stream Records -->
+        <section class="lg:col-span-8 glass-panel border border-slate-800 rounded-xl p-5 overflow-hidden">
+            <h2 class="text-xs text-slate-300 font-bold tracking-widest uppercase font-mono border-b border-slate-800 pb-3 mb-4">Constitutional Audit Stream Records</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse font-mono text-xs">
+                    <thead>
+                        <tr class="text-slate-500 uppercase text-[0.6rem] border-b border-slate-800">
+                            <th class="p-3">Audit Key</th>
+                            <th class="p-3">Gross Block</th>
+                            <th class="p-3 text-amber-400">1.5% PFS Sweep</th>
+                            <th class="p-3 text-emerald-400">1.5% RSP Pool</th>
+                            <th class="p-3 text-right">Net Settled</th>
+                        </tr>
+                    </thead>
+                    <tbody id="audit-body" class="divide-y divide-slate-800 text-slate-300">
+                        <tr class="border-b border-slate-800">
+                            <td class="p-3 text-blue-400">KUTS-AUD-491</td>
+                            <td class="p-3">10.00 Ꝃ</td>
+                            <td class="p-3 text-amber-400">-0.15 Ꝃ</td>
+                            <td class="p-3 text-emerald-400">-0.15 Ꝃ</td>
+                            <td class="p-3 text-right font-bold text-emerald-400">9.70 Ꝃ</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- KUTS UNIVERSAL DOMAIN FOOTER -->
+    <footer class="kuts-domain-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <span class="brand-dot"></span>
+                <strong>KUTS Ecosystem</strong>
+                <small>Global Navigation Matrix</small>
+            </div>
+            <nav class="domain-nav" aria-label="System Domains">
+                <a href="KUTS-Module-Menu.html" class="domain-link">Core & Gateways</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="browser-genesis.html" class="domain-link">Browser Genesis</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="compliance.html" class="domain-link font-bold text-blue-400">Compliance Suite</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="genesis-gateway.html" class="domain-link">Research & Integration</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="treasury-core.html" class="domain-link">Kine Treasury</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="dashboard.html" class="domain-link">Industry Dashboard</a>
+                <span class="divider" aria-hidden="true">•</span>
+                <a href="index.html" class="domain-link">Tools</a>
+            </nav>
+        </div>
+
+        <div class="footer-subnav">
+            <a href="entity-registry.html" class="sub-link">Entity Registry</a>
+            <span class="sub-divider">|</span>
+            <a href="my-task.html" class="sub-link">Worker Task Workspace</a>
+            <span class="sub-divider">|</span>
+            <a href="referrals.html" class="sub-link">Referral Hub</a>
+            <span class="sub-divider">|</span>
+            <a href="ai-assistant.html" class="sub-link">AI Assistant Node</a>
+            <span class="sub-divider">|</span>
+            <a href="SEARCH-LAYER.html" class="sub-link">Search Layer</a>
+            <span class="sub-divider">|</span>
+            <a href="kine-production-engine/index.html" class="sub-link">Kine Production Engine</a>
+            <span class="sub-divider">|</span>
+            <a href="kuts-chronometry-suite/index.html" class="sub-link">KUTS Chronometry Suite</a>
+            <span class="sub-divider">|</span>
+            <a href="carbon-credit-marketplace.html" class="sub-link">Carbon Market</a>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 PINALEAF ADVANCEMENTS LLP // KUTS GEODESIC MESH // ORIGIN: THRINC000 // AAROHAN 2050</p>
+        </div>
+    </footer>
+
+    <script>
+        function injectAudit(e) {
+            e.preventDefault();
+            const source = document.getElementById('comp-source').value;
+            const gross = parseFloat(document.getElementById('comp-gross').value);
+            
+            // Execute Revision 4 Triple-Split Logic (1.5% PFS + 1.5% RSP)
+            let split = { distributions: { pfsTax: gross * 0.015, rspAlloc: gross * 0.015, workerNet: gross * 0.97 } };
+            if (window.KUTS_ECONOMICS && typeof window.KUTS_ECONOMICS.executeTripleSplit === 'function') {
+                const res = window.KUTS_ECONOMICS.executeTripleSplit(gross);
+                split.distributions = { pfsTax: res.distributions.pfsTax, rspAlloc: res.distributions.rspAlloc, workerNet: res.distributions.workerNet };
+            }
+            
+            const auditKey = "KUTS-AUD-" + Math.floor(100 + Math.random() * 900);
+            const row = `
+                <tr class="border-b border-slate-800 opacity-0 translate-y-1" style="transition: all 0.3s ease;">
+                    <td class="p-3 text-blue-400">${auditKey}</td>
+                    <td class="p-3">${gross.toFixed(2)} Ꝃ</td>
+                    <td class="p-3 text-amber-400">-${split.distributions.pfsTax.toFixed(2)} Ꝃ</td>
+                    <td class="p-3 text-emerald-400">-${split.distributions.rspAlloc.toFixed(2)} Ꝃ</td>
+                    <td class="p-3 text-right font-bold text-emerald-400">${split.distributions.workerNet.toFixed(2)} Ꝃ</td>
+                </tr>
+            `;
+            const tbody = document.getElementById('audit-body');
+            tbody.insertAdjacentHTML('afterbegin', row);
+            
+            // Trigger fade-in animation
+            setTimeout(() => { tbody.firstElementChild.style.opacity = '1'; tbody.firstElementChild.style.transform = 'translateY(0)'; }, 20);
+            e.target.reset();
+            document.getElementById('comp-source').value = source;
+        }
+    </script>
+</body>
+</html>
