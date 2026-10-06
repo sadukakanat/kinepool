@@ -51,9 +51,10 @@ class DBNodeRegistry(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     node_id: Mapped[str] = mapped_column(String(10), unique=True, index=True)
-    node_name: Mapped[str] = mapped_column(String(100))
+    callsign: Mapped[str] = mapped_column(String(50), index=True, nullable=True)
+    node_name: Mapped[str] = mapped_column(String(100), nullable=True)
     status: Mapped[str] = mapped_column(String(20), default="ACTIVE")
-    registered_at: Mapped[int] = mapped_column(BigInteger)
+    registered_at: Mapped[int] = mapped_column(BigInteger, nullable=True)
 
 
 class DBTerminal(Base):
