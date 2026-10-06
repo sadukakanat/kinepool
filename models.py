@@ -14,7 +14,7 @@ class DBSubTickAllocation(Base):
     __table_args__ = (UniqueConstraint("node_id", "tick_integer", name="_node_tick_uc"),)
 
 ### 2. Initializing & Recreating the Database Index
-When deploying a new version model where older schemas need to be cleared or re-indexed:
+# When deploying a new version model where older schemas need to be cleared or re-indexed:
 
 1. **Drop and Recreate Tables (Prototype Environment):**
    > *Note: `create_all` does not alter pre-existing tables. If updating an older schema layout, drop the existing tables once before letting SQLAlchemy rebuild them[cite: 1].*
