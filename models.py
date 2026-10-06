@@ -12,4 +12,3 @@ class DBSubTickAllocation(Base):
     sub_counter: Mapped[int] = mapped_column(Integer)
     
     __table_args__ = (UniqueConstraint("node_id", "tick_integer", name="_node_tick_uc"),)
-    
