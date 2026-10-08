@@ -1,69 +1,43 @@
-from sqlalchemy import BigInteger, Float, Integer, String, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
-from database import Base
+"""
+KUTS API Data Models (Revision 8)
+Defines Pydantic models for request bodies, validation schemas, and response 
+structures for nodes, asset minting, ledger transactions, and telemetry sync.
+"""
 
+from pydantic import BaseModel, Field
+from typing import Optional
 
-class DBSubTickAllocation(Base):
-    """Ensures unique sub-tick indexing (00-99) per node and integer tick."""
+class NodeRegistrationRequest(BaseModel):
+    node_id: str = Field(..., description="Unique composite node ID or identifier")
+    callsign: str = Field(..., min_length=3, max_length=3, description="3-letter node callsign")
+    entity_name: str = Field(..., description="Operator or entity name")
+    domain_category: str = Field(..., description="Primary domain category code (e.g., '02', '13', '14')")
+    parent_anchor: str = Field(..., description="Parent Global Anchor Node ID (e.g., 'THRINC000')")
+    rve_endpoint: Optional[str] = Field(None, description="Resource-Verification Engine endpoint URL")
 
-    __tablename__ = "sub_tick_allocations"
+class AssetMintRequest(BaseModel):
+    title: str = Field(..., description="Title or description of the telemetry/resource unit")
+    functional_category: str = Field(..., description="Functional domain category")
+    energy_kwh: float = Field(..., ge=0.0, description="Energy metric in kWh")
+    compute_tokens: float = Field(..., ge=0.0, description="Compute metric in units")
+    target_anchor: str = Field(..., description="Target parent anchor node callsign or ID")
+    owner_node: str = Field(..., description="Owner node identifier receiving the minted Kines")
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    node_id: Mapped[str] = mapped_column(String(10), index=True)
-    tick_integer: Mapped[int] = mapped_column(BigInteger, index=True)
-    sub_counter: Mapped[int] = mapped_column(Integer)
+class ChronometricSyncRequest(BaseModel):
+    node_id: str = Field(..., description="Reporting node ID")
+    target_lat: float = Field(..., ge=-90.0, le=90.0, description="Node latitude")
+    target_lon: float = Field(..., ge=-180.0, le=180.0, description="Node longitude")
+    local_clock_offset_ns: float = Field(..., description="Measured clock offset in nanoseconds")
 
-    __table_args__ = (
-        UniqueConstraint("node_id", "tick_integer", name="_node_tick_uc"),
-    )
-
-
-class DBMeasurement(Base):
-    """Stores temporal measurement and sync telemetry data."""
-
-    __tablename__ = "measurements"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    node_id: Mapped[str] = mapped_column(String(10), index=True)
-    timestamp: Mapped[int] = mapped_column(BigInteger, index=True)
-    metric_name: Mapped[str] = mapped_column(String(50))
-    metric_value: Mapped[float] = mapped_column(Float)
-
-
-class DBSettlement(Base):
-    """Tracks protocol settlement records and token distributions."""
-
-    __tablename__ = "settlements"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    settlement_id: Mapped[str] = mapped_column(String(64), unique=True, index=True)
-    source_node: Mapped[str] = mapped_column(String(10))
-    target_node: Mapped[str] = mapped_column(String(10))
-    amount: Mapped[float] = mapped_column(Float)
-    status: Mapped[str] = mapped_column(String(20), default="PENDING")
-    created_at: Mapped[int] = mapped_column(BigInteger)
-
-
-class DBNodeRegistry(Base):
-    """Tracks registered nodes in the network."""
-
-    __tablename__ = "node_registry"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    node_id: Mapped[str] = mapped_column(String(10), unique=True, index=True)
-    callsign: Mapped[str] = mapped_column(String(50), index=True, nullable=True)
-    node_name: Mapped[str] = mapped_column(String(100), nullable=True)
-    status: Mapped[str] = mapped_column(String(20), default="ACTIVE")
-    registered_at: Mapped[int] = mapped_column(BigInteger, nullable=True)
-
-
-class DBTerminal(Base):
-    """Tracks connected terminals/clients per node."""
-
-    __tablename__ = "terminals"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    terminal_id: Mapped[str] = mapped_column(String(64), unique=True, index=True)
-    node_id: Mapped[str] = mapped_column(String(10), index=True)
-    status: Mapped[str] = mapped_column(String(20), default="ONLINE")
-    last_seen: Mapped[int] = mapped_column(BigInteger)
+if __name__ == "__main__":
+    print("Testing Pydantic Models...")
+    sample_data = {
+        "node_id": "02:00.01.13.51.71.67.97.76.61.67.66-THR.42",
+        "callsign": "KIN",
+        "entity_name": "Pinaleaf Advancements LLP",
+        "domain_category": "02",
+        "parent_anchor": "THRINC000",
+        "rve_endpoint": "https://rve.kinepool.in/attest"
+    }
+    req = NodeRegistrationRequest(**sample_data)
+    print("Validation Successful for Node Model:", req.dict())

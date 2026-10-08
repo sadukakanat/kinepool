@@ -1,247 +1,138 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KUTS Training & Research | Chronometric Converter</title>
+    <title>Temporal Converter | Kinepool</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="core/auth-bridge.js"></script>
-    <script src="core/kuts-core-bridge.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { background-color: #030712; color: #f1f5f9; font-family: 'Inter', sans-serif; }
-        .font-mono { font-family: 'Share Tech Mono', monospace; }
-        .glass-panel { background: rgba(13, 20, 32, 0.85); backdrop-filter: blur(16px); }
-        .glow-indigo { box-shadow: 0 0 35px rgba(99, 102, 241, 0.12); border-color: rgba(99, 102, 241, 0.3); }
-
-        /* KUTS Universal Domain Footer Styles */
-        .kuts-domain-footer {
-            width: 100%;
-            background: rgba(7, 11, 18, 0.95);
-            border-top: 1px solid #1e2a3a;
-            padding: 20px 24px 14px;
-            margin-top: auto;
-            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-            color: #91a1b8;
-            z-index: 50;
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#0a0b0e',
+                        surface: '#12141c',
+                        primary: '#00f2fe',
+                        accent: '#4facfe'
+                    }
+                }
+            }
         }
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-        }
-        .footer-brand {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: #edf4ff;
-        }
-        .footer-brand strong { letter-spacing: 0.05em; }
-        .footer-brand small {
-            color: #687a93;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            border-left: 1px solid #1e2a3a;
-            padding-left: 8px;
-        }
-        .brand-dot {
-            width: 6px;
-            height: 6px;
-            background: #35d39a;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #35d39a;
-        }
-        .domain-nav {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 10px;
-            font-size: 12px;
-        }
-        .domain-link {
-            color: #91a1b8;
-            text-decoration: none;
-            transition: color 0.15s ease;
-        }
-        .domain-link:hover { color: #61a5ff; text-decoration: underline; }
-        .divider { color: #2a3b51; font-size: 10px; }
-        .footer-subnav {
-            max-width: 1200px;
-            margin: 16px auto 0;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            font-size: 12px;
-        }
-        .sub-link {
-            color: #91a1b8;
-            font-weight: bold;
-            text-decoration: none;
-            transition: color 0.15s ease;
-        }
-        .sub-link:hover { color: #38bdf8; }
-        .sub-divider { color: #0284c7; }
-        .footer-bottom {
-            max-width: 1200px;
-            margin: 14px auto 0;
-            padding-top: 10px;
-            border-top: 1px solid rgba(30, 42, 58, 0.5);
-            text-align: center;
-            font-size: 10px;
-            color: #5f7088;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-        }
-    </style>
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 </head>
-<body class="min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+<body class="bg-obsidian text-slate-100 font-['Inter',sans-serif] min-h-screen flex flex-col justify-between selection:bg-primary selection:text-obsidian">
 
-    <!-- TOP TELEMETRY NAVBAR -->
-    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-blue-600 flex items-center justify-center font-mono font-black text-lg shadow-lg shadow-indigo-500/20">⏳</div>
-                <div>
-                    <h1 class="text-sm font-mono font-bold tracking-widest text-indigo-400 uppercase">KUTS_TEMPORAL_CONVERTER</h1>
-                    <p class="text-[0.6rem] font-mono text-slate-500 uppercase tracking-wider">Group 3 // Chronometric Engine</p>
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-slate-800 bg-surface/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <a href="index.html" class="w-8 h-8 rounded bg-gradient-to-tr from-primary to-accent flex items-center justify-center font-bold text-obsidian text-lg hover:opacity-90 transition-opacity">Ꝃ</a>
+                <span class="font-bold tracking-wider text-lg bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">KINEPOOL</span>
+            </div>
+            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-300">
+                <a href="index.html" class="hover:text-primary transition-colors">Home</a>
+                <a href="dashboard.html" class="hover:text-primary transition-colors">Dashboard</a>
+                <a href="genesis-gateway.html" class="hover:text-primary transition-colors">Gateway</a>
+                <a href="temporal-converter.html" class="text-primary font-semibold">Temporal</a>
+                <a href="explorer.html" class="hover:text-primary transition-colors">Explorer</a>
+                <a href="compliance.html" class="hover:text-primary transition-colors">Compliance</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <div id="kuts-clock" class="font-['JetBrains_Mono'] text-xs text-primary bg-primary/10 px-3 py-1.5 rounded border border-primary/20">
+                    EPOCH: SYNCING...
                 </div>
             </div>
-            <nav class="flex items-center gap-4 text-[0.7rem] font-mono uppercase tracking-widest text-slate-400">
-                <a href="academy.html" class="hover:text-indigo-400 transition">Academy Campus</a>
-                <span class="text-emerald-400 flex items-center gap-1.5 bg-emerald-950/40 px-2.5 py-1 rounded border border-emerald-900/40">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> ENGINE ACTIVE
-                </span>
-            </nav>
         </div>
     </header>
 
-    <!-- MAIN CONVERTER CONTENT -->
-    <main class="max-w-4xl mx-auto px-6 py-10 flex-1 w-full space-y-6">
+    <!-- Main Content -->
+    <main class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full space-y-10">
         
-        <div class="glass-panel border border-slate-800 rounded-2xl p-6 glow-indigo font-mono text-xs space-y-6">
-            <div class="border-b border-slate-800 pb-3 flex justify-between items-center">
-                <h2 class="text-indigo-400 font-bold uppercase tracking-widest">Holocene-Anchored Chronometer Translation</h2>
-                <span class="text-[0.6rem] text-slate-500">T0: 10,000 BCE Reference</span>
+        <!-- Header Section -->
+        <div class="text-center max-w-2xl mx-auto space-y-3">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-['JetBrains_Mono'] font-medium">
+                <span class="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+                <span>Master Origin Node: THRINC000 (Thrissur, India)</span>
+            </div>
+            <h1 class="text-3xl font-extrabold text-white tracking-tight">Kinetic Unified Temporal Converter</h1>
+            <p class="text-sm text-slate-400">Convert standard UTC timestamps into non-sexagesimal KUTS Revision 8 epoch ticks, base-100 scaling formats, and sub-tick precision bounds (<strong class="text-emerald-400">&le; 334.00 ns</strong>).</p>
+        </div>
+
+        <!-- Converter Tool Card -->
+        <div class="bg-surface border border-slate-800 rounded-2xl p-8 space-y-6 shadow-xl">
+            <h2 class="text-lg font-bold text-white border-b border-slate-800 pb-3 flex items-center justify-between">
+                <span>Temporal Metric Translation</span>
+                <span class="text-xs font-['JetBrains_Mono'] text-primary bg-primary/10 px-2.5 py-1 rounded border border-primary/20">Revision 8 Engine Active</span>
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 uppercase tracking-wider mb-2">Input UTC Timestamp / Epoch</label>
+                    <input type="text" id="input-utc" value="2026-10-08T09:22:23Z" class="w-full bg-obsidian border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-slate-200 font-['JetBrains_Mono'] focus:outline-none focus:border-primary">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 uppercase tracking-wider mb-2">Target Synchronization Anchor</label>
+                    <select class="w-full bg-obsidian border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-slate-200 font-['JetBrains_Mono'] focus:outline-none focus:border-primary">
+                        <option value="THRINC000">THRINC000 - Master Origin (Thrissur, India)</option>
+                        <option value="ANTZZC001">ANTZZC001 - Antipodal Node</option>
+                        <option value="GLBANC034">GLBANC034 - Global Anchor Node</option>
+                    </select>
+                </div>
             </div>
 
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-slate-500 text-[0.6rem] mb-1">SELECT TARGET GREGORIAN TIMESTAMP</label>
-                    <input type="datetime-local" id="target-datetime" class="w-full bg-black border border-slate-800 p-3 rounded text-slate-200 font-bold" />
-                </div>
-                <button onclick="convertTimestamp()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded uppercase tracking-widest transition">
-                    Convert to Session-Epoch Coordinate >>
+            <div class="pt-4 flex justify-end">
+                <button onclick="performConversion()" class="bg-gradient-to-r from-primary to-accent text-obsidian font-semibold px-6 py-2.5 rounded-lg text-sm hover:opacity-95 transition shadow-lg shadow-primary/10">
+                    Compute Temporal Tick &rarr;
                 </button>
             </div>
 
-            <div id="conversion-results" class="hidden mt-6 pt-6 border-t border-slate-800 space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-black/50 p-4 rounded-xl border border-slate-800">
-                        <span class="text-[0.6rem] text-slate-500 uppercase block mb-1">Elapsed Session-Epoch Ticks</span>
-                        <span id="res-ticks" class="text-indigo-400 font-bold text-sm">0</span>
-                    </div>
-                    <div class="bg-black/50 p-4 rounded-xl border border-slate-800">
-                        <span class="text-[0.6rem] text-slate-500 uppercase block mb-1">Julian Day Number (JDN)</span>
-                        <span id="res-jdn" class="text-cyan-400 font-bold text-sm">0.00</span>
-                    </div>
-                </div>
-                <div>
-                    <span class="text-[0.6rem] text-slate-500 uppercase block mb-1">Generated Base-100 Serial Coordinate (Category 01: Temporal)</span>
-                    <div id="res-serial" class="bg-black p-4 rounded-xl border border-indigo-900/50 text-emerald-400 font-bold text-center tracking-wider text-sm">
-                        01:00.00.00.00.00.00.00.00.00.00.00
-                    </div>
+            <!-- Output Display Area -->
+            <div class="mt-6 pt-6 border-t border-slate-800 space-y-4">
+                <span class="text-xs font-medium text-slate-400 uppercase tracking-wider font-['JetBrains_Mono'] block">KUTS Revision 8 Output Packet</span>
+                <div id="output-result" class="bg-obsidian border border-slate-800 rounded-xl p-5 font-['JetBrains_Mono'] text-xs space-y-2 text-slate-300">
+                    <div>Status: <span class="text-slate-500">Awaiting calculation...</span></div>
                 </div>
             </div>
         </div>
 
     </main>
 
-    <!-- KUTS UNIVERSAL DOMAIN FOOTER -->
-    <footer class="kuts-domain-footer">
-        <div class="footer-container">
-            <div class="footer-brand">
-                <span class="brand-dot"></span>
-                <strong>KUTS Ecosystem</strong>
-                <small>Global Navigation Matrix</small>
-            </div>
-            <nav class="domain-nav" aria-label="System Domains">
-                <a href="KUTS-Module-Menu.html" class="domain-link">Core & Gateways</a>
-                <span class="divider" aria-hidden="true">•</span>
-                <a href="browser-genesis.html" class="domain-link">Browser Genesis</a>
-                <span class="divider" aria-hidden="true">•</span>
-                <a href="academy.html" class="domain-link">Academy Campus</a>
-                <span class="divider" aria-hidden="true">•</span>
-                <a href="temporal-converter.html" class="domain-link font-bold text-indigo-400">Temporal Converter</a>
-                <span class="divider" aria-hidden="true">•</span>
-                <a href="treasury-core.html" class="domain-link">Kine Treasury</a>
-                <span class="divider" aria-hidden="true">•</span>
-                <a href="index.html" class="domain-link">Tools</a>
-            </nav>
-        </div>
-
-        <div class="footer-subnav">
-            <a href="entity-registry.html" class="sub-link">Entity Registry</a>
-            <span class="sub-divider">|</span>
-            <a href="my-task.html" class="sub-link">Worker Task Workspace</a>
-            <span class="sub-divider">|</span>
-            <a href="referrals.html" class="sub-link">Referral Hub</a>
-            <span class="sub-divider">|</span>
-            <a href="ai-assistant.html" class="sub-link">AI Assistant Node</a>
-            <span class="sub-divider">|</span>
-            <a href="SEARCH-LAYER.html" class="sub-link">Search Layer</a>
-            <span class="sub-divider">|</span>
-            <a href="kine-production-engine/index.html" class="sub-link">Kine Production Engine</a>
-            <span class="sub-divider">|</span>
-            <a href="kuts-chronometry-suite/index.html" class="sub-link">KUTS Chronometry Suite</a>
-            <span class="sub-divider">|</span>
-            <a href="carbon-credit-marketplace.html" class="sub-link">Carbon Market</a>
-        </div>
-
-        <div class="footer-bottom">
-            <p>© 2026 PINALEAF ADVANCEMENTS LLP // KUTS GEODESIC MESH // ORIGIN: THRINC000 // AAROHAN 2050</p>
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-surface/40 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 space-y-1">
+            <p>&copy; 2026 Kinepool / Pinaleaf Advancements LLP. All rights reserved.</p>
+            <p class="font-['JetBrains_Mono']">Temporal Converter Module | Master Origin THRINC000</p>
         </div>
     </footer>
 
+    <!-- Scripts -->
     <script>
-        // Set default datetime picker to now
-        window.addEventListener('DOMContentLoaded', () => {
+        function updateClock() {
             const now = new Date();
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-            document.getElementById('target-datetime').value = now.toISOString().slice(0, 16);
-        });
+            const utcTime = now.toISOString().replace('T', ' ').substring(0, 19);
+            document.getElementById('kuts-clock').innerText = `UTC: ${utcTime}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
 
-        function convertTimestamp() {
-            const val = document.getElementById('target-datetime').value;
-            if (!val) return;
-            const targetDate = new Date(val);
+        function performConversion() {
+            const utcInput = document.getElementById('input-utc').value;
+            const dateObj = new Date(utcInput);
+            const epochSeconds = Math.floor(dateObj.getTime() / 1000);
+            const subTick = Math.floor((dateObj.getTime() % 1000) / 10);
 
-            let ticks = 0n;
-            let jdn = 0;
-            let serialStr = "01:00.00.00.00.00.00.00.00.00.00.00";
-
-            if (window.KUTS_CORE && typeof window.KUTS_CORE.calculateElapsedTicks === 'function') {
-                ticks = window.KUTS_CORE.calculateElapsedTicks(targetDate);
-                jdn = window.KUTS_CORE.getJulianDayNumber(targetDate);
-                const generated = window.KUTS_CORE.generateSerial("01", targetDate);
-                serialStr = generated.serialString;
-            } else {
-                // Fallback local calculation
-                jdn = (targetDate.getTime() / 86400000) + 2440587.5;
-                ticks = BigInt(Math.floor((targetDate.getTime() / 1000) / 3.340e-7));
-            }
-
-            document.getElementById('res-ticks').innerText = ticks.toLocaleString() + " Ticks";
-            document.getElementById('res-jdn').innerText = jdn.toFixed(4);
-            document.getElementById('res-serial').innerText = serialStr;
-            document.getElementById('conversion-results').classList.remove('hidden');
+            const resultDiv = document.getElementById('output-result');
+            resultDiv.innerHTML = `
+                <div class="text-primary font-bold">SUCCESS: Temporal Packet Generated</div>
+                <div>UTC Reference: <span class="text-slate-200">${utcInput}</span></div>
+                <div>Epoch Tick (Base-10): <span class="text-emerald-400">${epochSeconds}</span></div>
+                <div>Sub-Tick Precision: <span class="text-emerald-400">${subTick.toString().padStart(2, '0')}</span></div>
+                <div>Uncertainty Bound: <span class="text-slate-200">334.00 ns</span></div>
+                <div>Master Origin Routing: <span class="text-primary">THRINC000 (Thrissur, India)</span></div>
+            `;
         }
     </script>
 </body>

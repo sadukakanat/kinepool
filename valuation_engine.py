@@ -1,74 +1,44 @@
 """
-Kinepool // KUTS Revision 8 Valuation Engine (Engine D)
-Kine calculation, $2.00 floor rate, and the 3.0% PFS/RSP split.
-
-All money/Kine math uses Decimal and is stored as integer "e8" units
-(1 Kine = 100_000_000 e8) so nothing is ever a float.
+KUTS Valuation Engine (Revision 8)
+Calculates tokenized Kine (Ꝃ) yields based on energy ($E$) and compute ($C$) components,
+enforces the $2.00 USD floor rate, and computes the 3.0% Least Action Protocol split (PFS/RSP).
 """
 
-from decimal import Decimal, localcontext, ROUND_HALF_EVEN
-
-E8 = Decimal(10) ** 8
-QUANT = Decimal("0.00000001")
-
-
-def to_e8(value: Decimal) -> int:
-    return int((value * E8).to_integral_value(rounding=ROUND_HALF_EVEN))
-
-
-def fmt_e8(units: int) -> str:
-    sign = "-" if units < 0 else ""
-    units = abs(units)
-    return f"{sign}{units // 10**8}.{units % 10**8:08d}"
-
-
 class ValuationEngine:
-    KINE_FLOOR_RATE_USD = Decimal("2.00")
-    E_BASE = Decimal("10")          # kWh per 1 K-equivalent base
-    C_BASE = Decimal("100000")      # compute tokens per 1 K-equivalent base
-    M_BASE = Decimal("1")
-    W1, W2, W3 = Decimal("0.5"), Decimal("0.5"), Decimal("0")
-    PFS_RATE = Decimal("0.015")     # Protocol Fiscal Sweep
-    RSP_RATE = Decimal("0.015")     # Regenerative Stewardship Pool
-    TOKENS_PER_MTOK = Decimal("1000000")
+    FLOOR_RATE_USD = 2.00
+    LAP_SPLIT_RATE = 0.03  # 3.0% Total Least Action Protocol split
+    PFS_RATIO = 0.5        # 1.5% allocation
+    RSP_RATIO = 0.5        # 1.5% allocation
 
-    def calculate_kines(self, energy_kwh: Decimal, compute_mtok: Decimal,
-                        resource_weight: Decimal = Decimal("1")) -> Decimal:
-        """Total K = (E/E_base)*w1 + (C/C_base)*w2 + (M/M_base)*w3"""
-        with localcontext() as ctx:
-            ctx.prec = 60
-            tokens = compute_mtok * self.TOKENS_PER_MTOK
-            total = ((energy_kwh / self.E_BASE) * self.W1
-                     + (tokens / self.C_BASE) * self.W2
-                     + (resource_weight / self.M_BASE) * self.W3)
-            return max(Decimal(0), total).quantize(QUANT, rounding=ROUND_HALF_EVEN)
+    @staticmethod
+    def calculate_kines(kwh: float, compute_tokens: float) -> dict:
+        """
+        Calculates minted Kines and economic valuation based on resource metrics:
+        - Energy Component (E): (kWh / 10.0) * 0.5
+        - Compute Component (C): (Compute / 0.1) * 0.5
+        """
+        energy_component = (max(0.0, kwh) / 10.0) * 0.5
+        compute_component = (max(0.0, compute_tokens) / 0.1) * 0.5
+        
+        total_kines = max(0.0, energy_component + compute_component)
+        
+        # Enforce $2.00 floor rate per Kine
+        floor_usd_value = total_kines * ValuationEngine.FLOOR_RATE_USD
 
-    def settle(self, energy_kwh: Decimal, compute_mtok: Decimal) -> dict:
-        """Returns integer e8 amounts. Invariant: pfs + rsp + net == raw."""
-        with localcontext() as ctx:
-            ctx.prec = 60
-            raw = self.calculate_kines(energy_kwh, compute_mtok)
-            if raw <= 0:
-                raise ValueError("Resource inputs produce zero Kines; enter energy and/or compute.")
-            usd = (raw * self.KINE_FLOOR_RATE_USD).quantize(QUANT, rounding=ROUND_HALF_EVEN)
-            pfs = (raw * self.PFS_RATE).quantize(QUANT, rounding=ROUND_HALF_EVEN)
-            rsp = (raw * self.RSP_RATE).quantize(QUANT, rounding=ROUND_HALF_EVEN)
-            net = raw - pfs - rsp
-            flux = raw * 100            # 1 K = 100 Flux
-            dyne = raw / 100            # 1 Dyne = 100 K
+        # Least Action Protocol 3.0% Split (1.5% PFS, 1.5% RSP)
+        pfs_kines = total_kines * (ValuationEngine.LAP_SPLIT_RATE * ValuationEngine.PFS_RATIO)
+        rsp_kines = total_kines * (ValuationEngine.LAP_SPLIT_RATE * ValuationEngine.RSP_RATIO)
+
         return {
-            "raw_kines_e8": to_e8(raw),
-            "valuation_usd_e8": to_e8(usd),
-            "pfs_e8": to_e8(pfs),
-            "rsp_e8": to_e8(rsp),
-            "net_e8": to_e8(net),
-            "flux_units": str(flux.quantize(Decimal("0.01"))),
-            "dyne_units": str(dyne.quantize(Decimal("0.000001"))),
-            "floor_rate_usd": str(self.KINE_FLOOR_RATE_USD),
+            "total_kines": round(total_kines, 4),
+            "floor_usd_value": round(floor_usd_value, 2),
+            "pfs_split_kines": round(pfs_kines, 4),
+            "rsp_split_kines": round(rsp_kines, 4),
+            "floor_rate_enforced": ValuationEngine.FLOOR_RATE_USD
         }
 
-
 if __name__ == "__main__":
-    s = ValuationEngine().settle(Decimal("50"), Decimal("5"))
-    print({k: (fmt_e8(v) if k.endswith("_e8") else v) for k, v in s.items()})
-    
+    engine = ValuationEngine()
+    print("Testing Valuation Engine...")
+    test_result = engine.calculate_kines(kwh=100.0, compute_tokens=1.0)
+    print("Valuation Output:", test_result)

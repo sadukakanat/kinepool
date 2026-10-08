@@ -1,286 +1,170 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KUTS Industry Hub | Least Action Freight Router</title>
+    <title>Freight Router | Kinepool</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="core/auth-bridge.js"></script>
-    <script src="core/kuts-core-bridge.js"></script>
-    <script src="core/kuts-economics.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { background-color: #030712; color: #f1f5f9; font-family: 'Inter', sans-serif; }
-        .font-mono { font-family: 'Share Tech Mono', monospace; }
-        .glass-panel { background: rgba(13, 20, 32, 0.85); backdrop-filter: blur(16px); }
-        .glow-orange { box-shadow: 0 0 35px rgba(249, 115, 22, 0.12); border-color: rgba(249, 115, 22, 0.3); }
-        .tabular-nums { font-variant-numeric: tabular-nums; }
-
-        /* KUTS Universal Domain Footer Styles */
-        .kuts-domain-footer {
-            width: 100%;
-            background: rgba(7, 11, 18, 0.95);
-            border-top: 1px solid #1e2a3a;
-            padding: 20px 24px 14px;
-            margin-top: auto;
-            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-            color: #91a1b8;
-            z-index: 50;
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#0a0b0e',
+                        surface: '#12141c',
+                        primary: '#00f2fe',
+                        accent: '#4facfe'
+                    }
+                }
+            }
         }
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-        }
-        .footer-brand {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: #edf4ff;
-        }
-        .footer-brand strong { letter-spacing: 0.05em; }
-        .footer-brand small {
-            color: #687a93;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            border-left: 1px solid #1e2a3a;
-            padding-left: 8px;
-        }
-        .brand-dot {
-            width: 6px;
-            height: 6px;
-            background: #35d39a;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #35d39a;
-        }
-        .domain-nav {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 10px;
-            font-size: 12px;
-        }
-        .domain-link {
-            color: #91a1b8;
-            text-decoration: none;
-            transition: color 0.15s ease;
-        }
-        .domain-link:hover { color: #61a5ff; text-decoration: underline; }
-        .divider { color: #2a3b51; font-size: 10px; }
-        .footer-subnav {
-            max-width: 1200px;
-            margin: 16px auto 0;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            font-size: 12px;
-        }
-        .sub-link {
-            color: #91a1b8;
-            font-weight: bold;
-            text-decoration: none;
-            transition: color 0.15s ease;
-        }
-        .sub-link:hover { color: #38bdf8; }
-        .sub-divider { color: #0284c7; }
-        .footer-bottom {
-            max-width: 1200px;
-            margin: 14px auto 0;
-            padding-top: 10px;
-            border-top: 1px solid rgba(30, 42, 58, 0.5);
-            text-align: center;
-            font-size: 10px;
-            color: #5f7088;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-        }
-    </style>
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 </head>
-<body class="min-h-screen flex flex-col selection:bg-orange-500 selection:text-white">
+<body class="bg-obsidian text-slate-100 font-['Inter',sans-serif] min-h-screen flex flex-col justify-between selection:bg-primary selection:text-obsidian">
 
-    <!-- TOP TELEMETRY NAVBAR -->
-    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-600 flex items-center justify-center font-mono font-black text-lg shadow-lg shadow-orange-500/20">⚡</div>
-                <div>
-                    <h1 class="text-sm font-mono font-bold tracking-widest text-orange-400 uppercase">KUTS_LEAST_ACTION_ROUTER</h1>
-                    <p class="text-[0.6rem] font-mono text-slate-500 uppercase tracking-wider">Aarohan 2050 // Supply-Chain Freight Matrix</p>
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-slate-800 bg-surface/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <a href="index.html" class="w-8 h-8 rounded bg-gradient-to-tr from-primary to-accent flex items-center justify-center font-bold text-obsidian text-lg hover:opacity-90 transition-opacity">Ꝃ</a>
+                <span class="font-bold tracking-wider text-lg bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">KINEPOOL</span>
+            </div>
+            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-300">
+                <a href="index.html" class="hover:text-primary transition-colors">Home</a>
+                <a href="dashboard.html" class="hover:text-primary transition-colors">Dashboard</a>
+                <a href="b2b-escrow.html" class="hover:text-primary transition-colors">B2B Escrow</a>
+                <a href="freight-router.html" class="text-primary font-semibold">Freight Router</a>
+                <a href="explorer.html" class="hover:text-primary transition-colors">Explorer</a>
+                <a href="compliance.html" class="hover:text-primary transition-colors">Compliance</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <div id="kuts-clock" class="font-['JetBrains_Mono'] text-xs text-primary bg-primary/10 px-3 py-1.5 rounded border border-primary/20">
+                    EPOCH: SYNCING...
                 </div>
             </div>
-            <nav class="flex items-center gap-4 text-[0.7rem] font-mono uppercase tracking-widest text-slate-400">
-                <a href="dashboard.html" class="hover:text-orange-400 transition">Command Center</a>
-                <span class="text-emerald-400 flex items-center gap-1.5 bg-emerald-950/40 px-2.5 py-1 rounded border border-emerald-900/40">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> ROUTER ONLINE
-                </span>
-            </nav>
         </div>
     </header>
 
-    <!-- MAIN FREIGHT ROUTER CONTENT -->
-    <main class="max-w-7xl mx-auto px-6 py-8 flex-1 w-full space-y-6">
+    <!-- Main Content -->
+    <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full space-y-10">
         
-        <!-- TOP METRICS GRID -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 font-mono">
-            <div class="glass-panel border border-slate-800 rounded-2xl p-5 glow-orange">
-                <span class="text-[0.6rem] text-slate-500 uppercase tracking-wider block mb-1">Active Corridors</span>
-                <span class="text-2xl font-bold text-orange-400 tabular-nums">16 Nodes</span>
-                <span class="text-[0.55rem] text-slate-400 block mt-1">Geodetic Anchor Registry</span>
-            </div>
-            <div class="glass-panel border border-slate-800 rounded-2xl p-5">
-                <span class="text-[0.6rem] text-slate-500 uppercase tracking-wider block mb-1">Temporal Friction</span>
-                <span class="text-2xl font-bold text-emerald-400 tabular-nums">0.00% Drift</span>
-                <span class="text-[0.55rem] text-slate-600 block mt-1">Synchronized to Session-Epoch</span>
-            </div>
-            <div class="glass-panel border border-slate-800 rounded-2xl p-5">
-                <span class="text-[0.6rem] text-slate-500 uppercase tracking-wider block mb-1">PFS Route Sweep (1.5%)</span>
-                <span class="text-2xl font-bold text-amber-400 tabular-nums">4.2500 Ꝃ</span>
-                <span class="text-[0.55rem] text-slate-600 block mt-1">Automatic protocol fee allocation</span>
-            </div>
-            <div class="glass-panel border border-slate-800 rounded-2xl p-5">
-                <span class="text-[0.6rem] text-slate-500 uppercase tracking-wider block mb-1">RSP Route Pool (1.5%)</span>
-                <span class="text-2xl font-bold text-teal-400 tabular-nums">4.2500 Ꝃ</span>
-                <span class="text-[0.55rem] text-slate-600 block mt-1">Regenerative corridor fund</span>
-            </div>
+        <!-- Header Section -->
+        <div class="text-center max-w-2xl mx-auto space-y-3">
+            <h1 class="text-3xl font-extrabold text-white tracking-tight">Spatial Freight & Anchor Transit Router</h1>
+            <p class="text-sm text-slate-400">Track cross-border shipments, geodetic anchor node handoffs, and light-delay corrected transport schedules governed by Master Origin <strong class="text-primary">THRINC000</strong>.</p>
         </div>
 
-        <!-- ROUTING CALCULATOR & LOGS -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            
-            <!-- ROUTE DISPATCH FORM -->
-            <div class="lg:col-span-5 glass-panel border border-slate-800 rounded-2xl p-6 font-mono text-xs space-y-4">
-                <h2 class="text-xs font-bold text-orange-400 uppercase tracking-widest border-b border-slate-800 pb-3">Dispatch Freight Vector</h2>
-                <form id="freight-form" onsubmit="dispatchFreight(event)" class="space-y-4">
+        <!-- Dispatch Form Card -->
+        <div class="bg-surface border border-slate-800 rounded-2xl p-8 space-y-6 shadow-xl">
+            <h2 class="text-lg font-bold text-white border-b border-slate-800 pb-3 flex items-center justify-between">
+                <span>Initialize Transit Route</span>
+                <span class="text-xs font-['JetBrains_Mono'] text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded border border-emerald-500/20">WGS 84 Geodesy Active</span>
+            </h2>
+
+            <form onsubmit="handleFreightDispatch(event)" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-slate-500 text-[0.6rem] mb-1">ORIGIN ANCHOR NODE</label>
-                        <select id="route-origin" class="w-full bg-black border border-slate-800 p-2.5 rounded text-blue-300">
-                            <option value="THRINC000">THRINC000 — Thrissur Origin [10.49° N]</option>
-                            <option value="KOOLINP002">KOOLINP002 — Koolimuttam Node</option>
-                            <option value="NAGINP003">NAGINP003 — Nagpur Anchor Node</option>
+                        <label class="block text-xs font-medium text-slate-300 uppercase tracking-wider mb-2">Origin Anchor Node</label>
+                        <select class="w-full bg-obsidian border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-slate-200 font-['JetBrains_Mono'] focus:outline-none focus:border-primary">
+                            <option value="THRINC000">THRINC000 - Master Origin (Thrissur, India)</option>
+                            <option value="ANTZZC001">ANTZZC001 - Antipodal Node</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-slate-500 text-[0.6rem] mb-1">DESTINATION NODE / TERMINAL</label>
-                        <input type="text" id="route-dest" value="DELHI-TERMINAL-01" required class="w-full bg-black border border-slate-800 p-2.5 rounded text-slate-200 uppercase">
-                    </div>
-                    <div>
-                        <label class="block text-slate-500 text-[0.6rem] mb-1">TRANSPORT MASS / VOLUME (kg)</label>
-                        <input type="number" id="route-mass" value="500.0" required min="1.0" step="0.5" class="w-full bg-black border border-slate-800 p-2.5 rounded text-slate-200">
-                    </div>
-                    <button type="submit" class="w-full bg-orange-600 hover:bg-orange-500 text-white py-3 rounded font-bold uppercase tracking-widest text-[0.65rem] transition">
-                        Compute Least Action Route >>
-                    </button>
-                </form>
-            </div>
-
-            <!-- ACTIVE ROUTE DISPATCH STREAM -->
-            <div class="lg:col-span-7 glass-panel border border-slate-800 rounded-2xl p-6 font-mono">
-                <h2 class="text-xs font-bold text-slate-200 uppercase tracking-widest border-b border-slate-800 pb-3 mb-4">Active Least Action Corridors</h2>
-                <div class="space-y-3 text-xs" id="freight-stream">
-                    <div class="p-3 bg-black/40 border border-slate-800 rounded-xl space-y-1">
-                        <div class="flex justify-between items-center text-[0.6rem]">
-                            <span class="text-orange-400 font-bold">Category 03: Kinetic Logistics Vector</span>
-                            <span class="text-slate-500">03:00.14.82.91.43...</span>
-                        </div>
-                        <div class="text-slate-300">THRINC000 → KOOLINP002 (500 kg Mass Settled)</div>
-                        <div class="flex justify-between text-[0.55rem] text-slate-500 pt-1 border-t border-slate-900">
-                            <span>Status: ZERO TEMPORAL FRICTION</span>
-                            <span class="text-emerald-400 font-bold">12.50 Ꝃ Settled</span>
-                        </div>
+                        <label class="block text-xs font-medium text-slate-300 uppercase tracking-wider mb-2">Destination Terminal / Anchor</label>
+                        <input type="text" required placeholder="e.g., KIN-TERMINAL-LON02" class="w-full bg-obsidian border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-slate-200 font-['JetBrains_Mono'] focus:outline-none focus:border-primary">
                     </div>
                 </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 uppercase tracking-wider mb-2">Cargo Classification</label>
+                        <input type="text" required placeholder="e.g., Solar Telemetry Hardware Unit" class="w-full bg-obsidian border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-primary">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 uppercase tracking-wider mb-2">Allocated Kine Bond (Ꝃ)</label>
+                        <input type="number" step="0.01" required placeholder="e.g., 150.00" class="w-full bg-obsidian border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-slate-200 font-['JetBrains_Mono'] focus:outline-none focus:border-primary">
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-slate-800 flex items-center justify-between flex-wrap gap-4">
+                    <div class="text-xs text-slate-400 font-['JetBrains_Mono']">
+                        Propagation Delay Tracking: <span class="text-primary">Active (&le; 334.00 ns uncertainty)</span>
+                    </div>
+                    <button type="submit" class="bg-gradient-to-r from-primary to-accent text-obsidian font-semibold px-6 py-2.5 rounded-lg text-sm hover:opacity-95 transition shadow-lg shadow-primary/10">
+                        Dispatch Freight Route &rarr;
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Active Transit Shipments Table -->
+        <div class="bg-surface border border-slate-800 rounded-2xl p-8 space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-white">Active Transit Shipments</h2>
+                    <p class="text-xs text-slate-400">Live spatial tracking across global anchor node grids.</p>
+                </div>
+                <span class="text-xs font-['JetBrains_Mono'] text-primary bg-primary/10 px-3 py-1 rounded border border-primary/20">2 Shipments in Transit</span>
             </div>
 
+            <div class="overflow-x-auto font-['JetBrains_Mono'] text-xs">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="text-slate-500 uppercase text-[10px] border-b border-slate-800">
+                            <th class="p-3">Route ID</th>
+                            <th class="p-3">Origin &rarr; Destination</th>
+                            <th class="p-3">Cargo Type</th>
+                            <th class="p-3">Bonded Kines</th>
+                            <th class="p-3 text-right">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800 text-slate-300">
+                        <tr class="hover:bg-slate-900/50 transition">
+                            <td class="p-3 text-primary font-bold">FRT-REV8-9102</td>
+                            <td class="p-3 text-slate-100">THRINC000 &rarr; KIN-LON02</td>
+                            <td class="p-3 text-slate-400">Solar Telemetry Hardware</td>
+                            <td class="p-3 text-emerald-400 font-bold">150.00 Ꝃ</td>
+                            <td class="p-3 text-right text-primary">IN TRANSIT</td>
+                        </tr>
+                        <tr class="hover:bg-slate-900/50 transition">
+                            <td class="p-3 text-primary font-bold">FRT-REV8-9103</td>
+                            <td class="p-3 text-slate-100">THRINC000 &rarr; KIN-SG01</td>
+                            <td class="p-3 text-slate-400">Compute Node Chassis</td>
+                            <td class="p-3 text-emerald-400 font-bold">320.00 Ꝃ</td>
+                            <td class="p-3 text-right text-emerald-400">ARRIVED / VERIFIED</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
     </main>
 
-    <!-- KUTS UNIVERSAL DOMAIN FOOTER -->
-    <footer class="kuts-domain-footer">
-        <div class="footer-container">
-            <div class="footer-brand">
-                <span class="brand-dot"></span>
-                <strong>KUTS Ecosystem</strong>
-                <small>Global Navigation Matrix</small>
-            </div>
-            <nav class="domain-nav" aria-label="System Domains">
-                <a href="KUTS-Module-Menu.html" class="domain-link">Core & Gateways</a>
-                <span class="divider" aria-hidden="true">•</span>
-                <a href="browser-genesis.html" class="domain-link">Browser Genesis</a>
-                <span class="divider" aria-hidden="true">•</span>
-                <a href="freight-router.html" class="domain-link font-bold text-orange-400">Freight Router</a>
-                <span class="divider" aria-hidden="true">•</span>
-                <a href="genesis-gateway.html" class="domain-link">Research & Integration</a>
-                <span class="divider" aria-hidden="true">•</span>
-                <a href="treasury-core.html" class="domain-link">Kine Treasury</a>
-                <span class="divider" aria-hidden="true">•</span>
-                <a href="dashboard.html" class="domain-link">Industry Dashboard</a>
-                <span class="divider" aria-hidden="true">•</span>
-                <a href="index.html" class="domain-link">Tools</a>
-            </nav>
-        </div>
-
-        <div class="footer-subnav">
-            <a href="entity-registry.html" class="sub-link">Entity Registry</a>
-            <span class="sub-divider">|</span>
-            <a href="my-task.html" class="sub-link">Worker Task Workspace</a>
-            <span class="sub-divider">|</span>
-            <a href="referrals.html" class="sub-link">Referral Hub</a>
-            <span class="sub-divider">|</span>
-            <a href="ai-assistant.html" class="sub-link">AI Assistant Node</a>
-            <span class="sub-divider">|</span>
-            <a href="SEARCH-LAYER.html" class="sub-link">Search Layer</a>
-            <span class="sub-divider">|</span>
-            <a href="kine-production-engine/index.html" class="sub-link">Kine Production Engine</a>
-            <span class="sub-divider">|</span>
-            <a href="kuts-chronometry-suite/index.html" class="sub-link">KUTS Chronometry Suite</a>
-            <span class="sub-divider">|</span>
-            <a href="carbon-credit-marketplace.html" class="sub-link">Carbon Market</a>
-        </div>
-
-        <div class="footer-bottom">
-            <p>© 2026 PINALEAF ADVANCEMENTS LLP // KUTS GEODESIC MESH // ORIGIN: THRINC000 // AAROHAN 2050</p>
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-surface/40 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 space-y-1">
+            <p>&copy; 2026 Kinepool / Pinaleaf Advancements LLP. All rights reserved.</p>
+            <p class="font-['JetBrains_Mono']">Freight Router Module | Master Origin THRINC000</p>
         </div>
     </footer>
 
+    <!-- Scripts -->
     <script>
-        function dispatchFreight(e) {
+        function updateClock() {
+            const now = new Date();
+            const utcTime = now.toISOString().replace('T', ' ').substring(0, 19);
+            document.getElementById('kuts-clock').innerText = `UTC: ${utcTime}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        function handleFreightDispatch(e) {
             e.preventDefault();
-            const origin = document.getElementById('route-origin').value;
-            const dest = document.getElementById('route-dest').value;
-            const mass = parseFloat(document.getElementById('route-mass').value);
-
-            const reward = mass * 0.025;
-            let serial = "03:00.12.45.89.23.11.42.00.00.00";
-            if (window.KUTS_CORE && typeof window.KUTS_CORE.generateSerial === 'function') {
-                serial = window.KUTS_CORE.generateSerial('Kinetic').serialString;
-            }
-
-            const stream = document.getElementById('freight-stream');
-            const card = `
-                <div class="p-3 bg-black/40 border border-slate-800 rounded-xl space-y-1 opacity-0 translate-y-2" style="transition: all 0.3s ease;">
-                    <div class="flex justify-between items-center text-[0.6rem]">
-                        <span class="text-orange-400 font-bold">Category 03: Kinetic Logistics Vector</span>
-                        <span class="text-slate-500">${serial}</span>
-                    </div>
-                    <div class="text-slate-300">${origin} → ${dest} (${mass} kg Mass Settled)</div>
-                    <div class="flex justify-between text-[0.55rem] text-slate-500 pt-1 border-t border-slate-900">
-                        <span>Status: LEAST ACTION OPTIMIZED</span>
-                        <span class="text-emerald-400 font-bold">+${reward.toFixed(4)} Ꝃ Settled</span>
-                    </div>
-                </div>
-            `;
-            stream.insertAdjacentHTML('afterbegin', card);
-            setTimeout(() => { stream.firstElementChild.style.opacity = '1'; stream.firstElementChild.style.transform = 'translateY(0)'; }, 20);
-            e.target.reset();
+            alert("Freight route successfully registered and bonded with Master Origin (THRINC000).");
         }
     </script>
 </body>

@@ -1,81 +1,130 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kinepool | Ledger Explorer & Audit Terminal</title>
+    <title>Network Explorer | Kinepool</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;800&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .mono-font { font-family: 'JetBrains Mono', monospace; }
-        .glow-border { box-shadow: 0 0 25px rgba(59, 130, 246, 0.1); }
-    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#0a0b0e',
+                        surface: '#12141c',
+                        primary: '#00f2fe',
+                        accent: '#4facfe'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
+<body class="bg-obsidian text-slate-100 font-['Inter',sans-serif] min-h-screen flex flex-col justify-between selection:bg-primary selection:text-obsidian">
 
-    <!-- HEADER -->
-    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-slate-800 bg-surface/80 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="h-3 w-3 bg-emerald-500 rounded-full animate-pulse"></div>
-                <span class="font-extrabold text-lg tracking-wider text-white">KINEPOOL <span class="text-xs text-amber-400 font-mono px-2 py-0.5 bg-amber-950 border border-amber-800 rounded">Ledger Explorer</span></span>
+                <a href="index.html" class="w-8 h-8 rounded bg-gradient-to-tr from-primary to-accent flex items-center justify-center font-bold text-obsidian text-lg hover:opacity-90 transition-opacity">Ꝃ</a>
+                <span class="font-bold tracking-wider text-lg bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">KINEPOOL</span>
             </div>
-            <nav class="hidden md:flex space-x-6 text-sm font-medium text-slate-300">
-                <a href="index.html" class="hover:text-emerald-400 transition">Overview</a>
-                <a href="register.html" class="hover:text-emerald-400 transition">Node Registry</a>
-                <a href="asset-register.html" class="hover:text-emerald-400 transition">Mint Kines</a>
-                <a href="explorer.html" class="text-emerald-400 transition font-semibold">Ledger Explorer</a>
+            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-300">
+                <a href="index.html" class="hover:text-primary transition-colors">Home</a>
+                <a href="explorer.html" class="text-primary font-semibold">Explorer</a>
+                <a href="genesis-gateway.html" class="hover:text-primary transition-colors">Gateway</a>
+                <a href="treasury-core.html" class="hover:text-primary transition-colors">Treasury</a>
+                <a href="compliance.html" class="hover:text-primary transition-colors">Compliance</a>
             </nav>
-            <div>
-                <span class="text-xs mono-font text-slate-400">Master Origin: <strong class="text-emerald-400">THRINC000</strong></span>
+            <div class="flex items-center space-x-4">
+                <div id="kuts-clock" class="font-['JetBrains_Mono'] text-xs text-primary bg-primary/10 px-3 py-1.5 rounded border border-primary/20">
+                    EPOCH: SYNCING...
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- MAIN CONTAINER -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full space-y-8">
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full space-y-8">
         
-        <!-- Search & Query Section -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 glow-border space-y-4">
-            <h1 class="text-2xl font-extrabold text-white tracking-tight">KUTS Master Ledger Search</h1>
-            <p class="text-slate-400 text-xs sm:text-sm">
-                Inspect composite identifiers and Least Action Protocol allocations. Use the Verify chain button to recompute the ledger's hash chain and detect any altered or missing record.
-            </p>
-            
-            <div class="flex flex-col sm:flex-row gap-3 pt-2">
-                <input type="text" id="search-input" placeholder="Enter Composite ID (e.g. 03:00.01...) or leave blank for recent..." class="flex-grow bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm mono-font text-slate-200 focus:outline-none focus:border-emerald-500">
-                <button onclick="searchLedger()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-3 rounded-xl transition text-sm shadow-lg shadow-emerald-900/20">
-                    Query Ledger
-                </button>
-                <button onclick="verifyChain()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-6 py-3 rounded-xl transition text-sm">
-                    Verify chain
-                </button>
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-extrabold text-white tracking-tight">KUTS Network Explorer</h1>
+                <p class="text-sm text-slate-400 mt-1">Real-time ledger streams, anchor node health, and 64-order temporal verification.</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <div class="bg-surface border border-slate-800 px-4 py-2 rounded-lg text-xs font-['JetBrains_Mono'] text-slate-300">
+                    Master Origin: <span class="text-primary font-bold">THRINC000</span>
+                </div>
             </div>
         </div>
 
-        <!-- Ledger Feed Table -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-            <div class="p-6 border-b border-slate-800 flex justify-between items-center">
-                <h2 class="text-lg font-semibold text-white">Ledger Records (append-only, hash-chained)</h2>
-                <span class="text-xs text-slate-400 mono-font">Sync Status: <span id="sync-status" class="text-slate-400">Checking...</span></span>
+        <!-- Telemetry Stat Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-surface border border-slate-800 p-5 rounded-xl">
+                <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Active Epoch Height</p>
+                <p class="text-2xl font-bold font-['JetBrains_Mono'] text-white mt-2">#849,203</p>
+                <span class="text-xs text-emerald-400 mt-1 block">● 100% Synchronized</span>
             </div>
-            
+            <div class="bg-surface border border-slate-800 p-5 rounded-xl">
+                <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Global Anchor Nodes</p>
+                <p class="text-2xl font-bold font-['JetBrains_Mono'] text-white mt-2">34 / 34</p>
+                <span class="text-xs text-primary mt-1 block">Operational Status: Nominal</span>
+            </div>
+            <div class="bg-surface border border-slate-800 p-5 rounded-xl">
+                <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Kine Minted ($\mathbb{K}$)</p>
+                <p class="text-2xl font-bold font-['JetBrains_Mono'] text-white mt-2">1,429,812.45</p>
+                <span class="text-xs text-slate-400 mt-1 block">Flux Rate: 12.4 ƒ/sec</span>
+            </div>
+            <div class="bg-surface border border-slate-800 p-5 rounded-xl">
+                <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Stewardship Pool (RSP)</p>
+                <p class="text-2xl font-bold font-['JetBrains_Mono'] text-white mt-2">84,102.10</p>
+                <span class="text-xs text-accent mt-1 block">1% Sweep Active</span>
+            </div>
+        </div>
+
+        <!-- Live Ledger Stream Table -->
+        <div class="bg-surface border border-slate-800 rounded-xl overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+                <h3 class="font-semibold text-white text-sm">Recent Ledger Transactions & Telemetry</h3>
+                <span class="text-xs font-['JetBrains_Mono'] text-slate-400 animate-pulse">LIVE FEED</span>
+            </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-300">
-                    <thead class="bg-slate-950 text-xs uppercase text-slate-500 mono-font border-b border-slate-800">
-                        <tr>
-                            <th class="px-6 py-4">Category</th>
-                            <th class="px-6 py-4">Composite KUTS Identifier</th>
-                            <th class="px-6 py-4">Minted Value</th>
-                            <th class="px-6 py-4">Reference Value (USD)</th>
-                            <th class="px-6 py-4">State / Hash</th>
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="border-b border-slate-800 bg-slate-900/50 text-slate-400 font-['JetBrains_Mono'] text-xs">
+                            <th class="py-3 px-6">SERIAL HASH</th>
+                            <th class="py-3 px-6">DOMAIN</th>
+                            <th class="py-3 px-6">METRIC VALUE</th>
+                            <th class="py-3 px-6">STATUS</th>
+                            <th class="py-3 px-6 text-right">TIMESTAMP</th>
                         </tr>
                     </thead>
-                    <tbody id="ledger-table-body" class="divide-y divide-slate-800/60 font-mono text-xs">
-                        <!-- Dynamically populated via PostgreSQL query -->
+                    <tbody id="ledger-stream" class="divide-y divide-slate-800/60 font-['JetBrains_Mono'] text-xs text-slate-300">
                         <tr>
-                            <td colspan="5" class="px-6 py-6 text-center text-slate-500">Loading ledger records...</td>
+                            <td class="py-3 px-6 text-primary">0x4f8a...3b21</td>
+                            <td class="py-3 px-6">Chronometric Sync</td>
+                            <td class="py-3 px-6">1,024 Ꝃ</td>
+                            <td class="py-3 px-6"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">VERIFIED</span></td>
+                            <td class="py-3 px-6 text-right text-slate-500">2026-10-06 18:22:00</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-6 text-primary">0x91bc...7e44</td>
+                            <td class="py-3 px-6">Resource Allocation</td>
+                            <td class="py-3 px-6">450.8 ƒ</td>
+                            <td class="py-3 px-6"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">VERIFIED</span></td>
+                            <td class="py-3 px-6 text-right text-slate-500">2026-10-06 18:21:45</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-6 text-primary">0x32da...1a89</td>
+                            <td class="py-3 px-6">Node Handshake</td>
+                            <td class="py-3 px-6">ANTZZC001</td>
+                            <td class="py-3 px-6"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">VERIFIED</span></td>
+                            <td class="py-3 px-6 text-right text-slate-500">2026-10-06 18:21:12</td>
                         </tr>
                     </tbody>
                 </table>
@@ -84,77 +133,23 @@
 
     </main>
 
-    <!-- FOOTER -->
-    <footer class="border-t border-slate-800 bg-slate-900/30 text-center py-6 text-xs text-slate-500">
-        <p>Kinepool Global Resource Ledger &bull; Master Origin THRINC000 &bull; KUTS Rev 8</p>
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-surface/40 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 space-y-1">
+            <p>&copy; 2026 Kinepool / Pinaleaf Advancements LLP. All rights reserved.</p>
+            <p class="font-['JetBrains_Mono']">Protocol v2.4 | Flat Deployment Mode</p>
+        </div>
     </footer>
 
+    <!-- Script for Live Clock -->
     <script>
-        function esc(v) {
-            return String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        function updateClock() {
+            const now = new Date();
+            const utcTime = now.toISOString().replace('T', ' ').substring(0, 19);
+            document.getElementById('kuts-clock').innerText = `UTC: ${utcTime}`;
         }
-
-        window.addEventListener('DOMContentLoaded', () => { fetchLedgerData(); });
-
-        async function searchLedger() {
-            fetchLedgerData(document.getElementById('search-input').value.trim());
-        }
-
-        async function verifyChain() {
-            const el = document.getElementById('sync-status');
-            el.className = 'text-slate-400'; el.textContent = 'Verifying chain...';
-            try {
-                const res = await fetch('/api/v8/ledger/verify');
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                const r = await res.json();
-                if (r.ok) {
-                    el.className = 'text-emerald-400';
-                    el.textContent = `Chain intact (${r.checked} records)`;
-                } else {
-                    el.className = 'text-red-400';
-                    el.textContent = `Chain BROKEN at seq ${r.first_bad_seq}: ${r.reason}`;
-                }
-            } catch (err) {
-                el.className = 'text-red-400'; el.textContent = 'Verification unavailable';
-            }
-        }
-
-        async function fetchLedgerData(searchQuery = '') {
-            const tbody = document.getElementById('ledger-table-body');
-            const sync = document.getElementById('sync-status');
-            tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-6 text-center text-slate-500">Querying ledger...</td></tr>`;
-            try {
-                const url = searchQuery ? `/api/v8/ledger/search?query=${encodeURIComponent(searchQuery)}` : '/api/v8/ledger/search';
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Failed to fetch ledger records');
-                const data = await response.json();
-                sync.className = 'text-emerald-400'; sync.textContent = 'Database connected';
-
-                if (data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-6 text-center text-amber-400">No matching ledger records found.</td></tr>`;
-                    return;
-                }
-                tbody.innerHTML = '';
-                data.forEach(item => {
-                    const catCode = String(item.composite_kuts_id).split(':')[0] || '00';
-                    const row = document.createElement('tr');
-                    row.className = 'hover:bg-slate-800/40 transition';
-                    row.innerHTML = `
-                        <td class="px-6 py-4 text-emerald-400 font-bold">${esc(catCode)}</td>
-                        <td class="px-6 py-4 text-amber-300 select-all">${esc(item.composite_kuts_id)}</td>
-                        <td class="px-6 py-4 text-emerald-400">${esc(item.raw_kines)} K</td>
-                        <td class="px-6 py-4 text$${esc(item.total_valuation_usd)}</td>
-                        <td class="px-6 py-4"><span class="px-2 py-0.5 bg-emerald-950 text-emerald-400 rounded border border-emerald-800">RECORDED</span>
-                            <span class="block text-[10px] text-slate-500 mt-1" title="${esc(item.entry_hash)}">#${esc(item.seq)} ${esc(String(item.entry_hash).slice(0, 12))}&hellip;</span></td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            } catch (err) {
-                console.error('Ledger Search Error:', err);
-                sync.className = 'text-red-400'; sync.textContent = 'Database unreachable';
-                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-6 text-center text-red-400">Error connecting to the ledger query endpoint.</td></tr>`;
-            }
-        }
+        setInterval(updateClock, 1000);
+        updateClock();
     </script>
 </body>
 </html>

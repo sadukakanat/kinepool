@@ -1,158 +1,178 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kinepool | Global Resource Ledger (MCC Terminal 1)</title>
+    <title>Kinepool | Decentralized Resource Ledger & Chronometric Ecosystem</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;800&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .mono-font { font-family: 'JetBrains Mono', monospace; }
-        .glow-border { box-shadow: 0 0 25px rgba(59, 130, 246, 0.15); }
-    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#0a0b0e',
+                        surface: '#12141c',
+                        primary: '#00f2fe',
+                        accent: '#4facfe'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
+<body class="bg-obsidian text-slate-100 font-['Inter',sans-serif] min-h-screen flex flex-col justify-between selection:bg-primary selection:text-obsidian">
 
     <!-- Top Navigation Bar -->
-    <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur sticky top-0 z-50">
+    <header class="border-b border-slate-800 bg-surface/80 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
-                <span class="text-lg font-bold tracking-wider text-white">KINEPOOL</span>
-                <span class="text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">KUTS Rev 8</span>
+                <a href="index.html" class="w-8 h-8 rounded bg-gradient-to-tr from-primary to-accent flex items-center justify-center font-bold text-obsidian text-lg hover:opacity-90 transition-opacity">Ꝃ</a>
+                <span class="font-bold tracking-wider text-lg bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">KINEPOOL</span>
             </div>
-            <nav class="hidden md:flex space-x-6 text-sm font-medium text-slate-300">
-                <a href="index.html" class="hover:text-emerald-400 transition">Overview</a>
-                <a href="register.html" class="hover:text-emerald-400 transition">Node Registry</a>
-                <a href="asset-register.html" class="hover:text-emerald-400 transition">Mint Kines</a>
-                <a href="explorer.html" class="hover:text-emerald-400 transition">Ledger Explorer</a>
+            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-300">
+                <a href="index.html" class="text-primary font-semibold">Home</a>
+                <a href="dashboard.html" class="hover:text-primary transition-colors">Dashboard</a>
+                <a href="admin.html" class="hover:text-primary transition-colors">Admin</a>
+                <a href="star-hunter.html" class="hover:text-primary transition-colors">Star Hunter</a>
+                <a href="wallet-ledger.html" class="hover:text-primary transition-colors">Wallet</a>
+                <a href="compliance.html" class="hover:text-primary transition-colors">Compliance</a>
             </nav>
-            <div>
-                <a href="register.html" class="bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition shadow-lg shadow-emerald-900/20 inline-block">
-                    Connect NodeID
-                </a>
+            <div class="flex items-center space-x-4">
+                <div id="kuts-clock" class="font-['JetBrains_Mono'] text-xs text-primary bg-primary/10 px-3 py-1.5 rounded border border-primary/20">
+                    EPOCH: SYNCING...
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Dashboard Container -->
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
-
-        <!-- Hero Banner -->
-        <section class="bg-gradient-to-r from-slate-900 to-slate-900/40 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
-            <div class="max-w-3xl">
-                <h1 class="text-3xl sm:text-4xl font-bold text-white tracking-tight">Global Resource Ledger</h1>
-                <p class="mt-2 text-slate-400 text-base sm:text-lg">
-                    Register global assets, record telemetry through the RVE, and express value in Kines ($K$) using the deterministic 64-order KUTS synchronization framework.
-                </p>
+    <!-- Hero Section -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full space-y-16">
+        
+        <div class="text-center max-w-3xl mx-auto space-y-6">
+            <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-['JetBrains_Mono'] font-medium">
+                <span class="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+                <span>Master Origin Node: THRINC000 (Thrissur, Kerala, India)</span>
             </div>
-            <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-slate-800/80">
-                <div>
-                    <span class="text-xs text-slate-500 uppercase tracking-wider">Session-Epoch</span>
-                    <p class="text-lg font-semibold text-emerald-400">334.00 ns</p>
-                </div>
-                <div>
-                    <span class="text-xs text-slate-500 uppercase tracking-wider">Kine Floor Rate</span>
-                    <p class="text-lg font-semibold text-white" id="floor-display">$2.00 USD / K</p>
-                </div>
-                <div>
-                    <span class="text-xs text-slate-500 uppercase tracking-wider">Master Origin Node</span>
-                    <p class="text-lg font-semibold text-white">THRINC000 (Thrissur)</p>
-                </div>
-                <div>
-                    <span class="text-xs text-slate-500 uppercase tracking-wider">Server Status</span>
-                    <p class="text-lg font-semibold text-emerald-400" id="server-status">Connecting...</p>
-                </div>
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
+                Decentralized Resource Ledger & Chronometric Ecosystem
+            </h1>
+            <p class="text-base text-slate-400">
+                Built on the <strong class="text-white">KUTS Revision 8</strong> framework. Empowering secure energy-compute asset minting, hierarchical multi-tier administration, and light-delay corrected synchronization (&le; 334.00 ns).
+            </p>
+            <div class="flex items-center justify-center gap-4 flex-wrap pt-2">
+                <a href="dashboard.html" class="bg-gradient-to-r from-primary to-accent text-obsidian font-semibold px-6 py-3 rounded-xl text-sm hover:opacity-95 transition shadow-lg shadow-primary/10">
+                    Enter Operator Dashboard &rarr;
+                </a>
+                <a href="genesis-gateway.html" class="bg-surface border border-slate-700 text-slate-200 font-semibold px-6 py-3 rounded-xl text-sm hover:border-primary transition">
+                    Genesis Gateway
+                </a>
             </div>
-        </section>
+        </div>
 
-        <!-- Dynamic Content Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Left 2 Cols: Live Ledger Stream -->
-            <div class="lg:col-span-2 bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
-                <div>
-                    <h2 class="text-lg font-semibold text-white mb-4 flex items-center justify-between">
-                        <span>Reference Vectors</span>
-                        <span class="text-xs text-emerald-400 bg-emerald-950/50 px-2 py-1 rounded border border-emerald-800/50">Base-100 Payload Active</span>
-                    </h2>
-                    <div class="space-y-3">
-                        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/60 text-sm flex justify-between items-center">
-                            <div>
-                                <p class="text-slate-200 font-medium">Gravitational-Wave Reference Event (GW150914)</p>
-                                <p class="text-xs text-slate-500 mono-font mt-0.5">03:00.01.13.51.71.67.97.76.61.67.66-THR.01</p>
-                            </div>
-                            <span class="text-xs text-emerald-400 font-semibold">Test vector (passes)</span>
-                        </div>
-                        <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/60 text-sm flex justify-between items-center">
-                            <div>
-                                <p class="text-slate-200 font-medium">System Reference Epoch Initialization</p>
-                                <p class="text-xs text-slate-500 mono-font mt-0.5">01:00.00.00.00.00.00.00.00.00.00.00-THRINC000.00</p>
-                            </div>
-                            <span class="text-xs text-slate-400 font-semibold">Anchor</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-6 pt-4 border-t border-slate-800/80 text-xs text-slate-500 flex justify-between items-center">
-                    <span id="engine-status">Engine status: checking...</span>
-                    <a href="asset-register.html" class="text-emerald-400 hover:underline">Proceed to Minting &rarr;</a>
-                </div>
+        <!-- System Architecture Highlights -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 font-['JetBrains_Mono'] text-xs">
+            <div class="bg-surface border border-slate-800 rounded-2xl p-6 space-y-2">
+                <span class="text-slate-400 uppercase tracking-wider block text-[10px]">Floor Valuation</span>
+                <div class="text-2xl font-bold text-white">$2.00 / Ꝃ</div>
+                <span class="text-emerald-400">Stable Resource Standard</span>
             </div>
+            <div class="bg-surface border border-slate-800 rounded-2xl p-6 space-y-2">
+                <span class="text-slate-400 uppercase tracking-wider block text-[10px]">LAP Split Policy</span>
+                <div class="text-2xl font-bold text-primary">3.0% Total</div>
+                <span class="text-slate-400">1.5% PFS / 1.5% RSP</span>
+            </div>
+            <div class="bg-surface border border-slate-800 rounded-2xl p-6 space-y-2">
+                <span class="text-slate-400 uppercase tracking-wider block text-[10px]">Drift Bound</span>
+                <div class="text-2xl font-bold text-emerald-400">&le; 334.00 ns</div>
+                <span class="text-slate-400">Chronometric Precision</span>
+            </div>
+            <div class="bg-surface border border-slate-800 rounded-2xl p-6 space-y-2">
+                <span class="text-slate-400 uppercase tracking-wider block text-[10px]">Render Backend</span>
+                <div class="text-2xl font-bold text-primary">Connected</div>
+                <span class="text-slate-400">kinepool.onrender.com</span>
+            </div>
+        </div>
 
-            <!-- Right Col: Quick Actions -->
-            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
-                <div>
-                    <h2 class="text-lg font-semibold text-white mb-2">Terminal Quick Links</h2>
-                    <p class="text-xs text-slate-400 mb-4">Register a terminal, then record resources against the ledger. Inputs are self-reported in this prototype.</p>
-                    <div class="space-y-3">
-                        <a href="register.html" class="block p-3 bg-slate-950 hover:border-emerald-500 border border-slate-800 rounded-xl transition">
-                            <span class="text-xs font-bold text-white block">1. Register Hardware Terminal</span>
-                            <span class="text-[11px] text-slate-400">Get an anonymous terminal ID and access token.</span>
-                        </a>
-                        <a href="asset-register.html" class="block p-3 bg-slate-950 hover:border-emerald-500 border border-slate-800 rounded-xl transition">
-                            <span class="text-xs font-bold text-white block">2. Register Asset & Mint Kines</span>
-                            <span class="text-[11px] text-slate-400">Record energy/compute as Kine units ($K$).</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="mt-6">
-                    <div class="text-[11px] text-slate-500 mono-font text-center">
-                        Master Origin: Thrissur, India (THRINC000)
-                    </div>
-                </div>
+        <!-- Complete Ecosystem Portals Directory -->
+        <div class="bg-surface border border-slate-800 rounded-2xl p-8 space-y-6">
+            <h2 class="text-lg font-bold text-white border-b border-slate-800 pb-3 flex items-center justify-between">
+                <span>Ecosystem Module Navigation Directory</span>
+                <span class="text-xs font-['JetBrains_Mono'] text-primary">Revision 8 Suite</span>
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 font-['JetBrains_Mono'] text-xs">
+                <a href="dashboard.html" class="p-4 bg-obsidian border border-slate-800 hover:border-primary/50 rounded-xl transition flex flex-col space-y-2">
+                    <span class="text-primary font-bold text-sm">Dashboard &rarr;</span>
+                    <span class="text-slate-400 font-['Inter']">Core operator metrics and live balances.</span>
+                </a>
+                <a href="admin.html" class="p-4 bg-obsidian border border-slate-800 hover:border-primary/50 rounded-xl transition flex flex-col space-y-2">
+                    <span class="text-primary font-bold text-sm">Admin Panel &rarr;</span>
+                    <span class="text-slate-400 font-['Inter']">Level 1, 2, and 3 node operator controls.</span>
+                </a>
+                <a href="genesis-gateway.html" class="p-4 bg-obsidian border border-slate-800 hover:border-primary/50 rounded-xl transition flex flex-col space-y-2">
+                    <span class="text-primary font-bold text-sm">Genesis Gateway &rarr;</span>
+                    <span class="text-slate-400 font-['Inter']">Initialize MCC handshakes and Render sync.</span>
+                </a>
+                <a href="temporal-converter.html" class="p-4 bg-obsidian border border-slate-800 hover:border-primary/50 rounded-xl transition flex flex-col space-y-2">
+                    <span class="text-primary font-bold text-sm">Temporal Converter &rarr;</span>
+                    <span class="text-slate-400 font-['Inter']">Non-sexagesimal chronometric conversions.</span>
+                </a>
+                <a href="b2b-escrow.html" class="p-4 bg-obsidian border border-slate-800 hover:border-primary/50 rounded-xl transition flex flex-col space-y-2">
+                    <span class="text-primary font-bold text-sm">B2B Escrow &rarr;</span>
+                    <span class="text-slate-400 font-['Inter']">Conditional multi-party resource locking.</span>
+                </a>
+                <a href="freight-router.html" class="p-4 bg-obsidian border border-slate-800 hover:border-primary/50 rounded-xl transition flex flex-col space-y-2">
+                    <span class="text-primary font-bold text-sm">Freight Router &rarr;</span>
+                    <span class="text-slate-400 font-['Inter']">Spatial logistics and anchor node transit.</span>
+                </a>
+                <a href="my-task.html" class="p-4 bg-obsidian border border-slate-800 hover:border-primary/50 rounded-xl transition flex flex-col space-y-2">
+                    <span class="text-primary font-bold text-sm">Operator Tasks &rarr;</span>
+                    <span class="text-slate-400 font-['Inter']">Worker sweeps and telemetry challenges.</span>
+                </a>
+                <a href="star-hunter.html" class="p-4 bg-obsidian border border-slate-800 hover:border-primary/50 rounded-xl transition flex flex-col space-y-2">
+                    <span class="text-primary font-bold text-sm">Star Hunter HUD &rarr;</span>
+                    <span class="text-slate-400 font-['Inter']">Kinetic particle catching simulation.</span>
+                </a>
+                <a href="wallet-ledger.html" class="p-4 bg-obsidian border border-slate-800 hover:border-primary/50 rounded-xl transition flex flex-col space-y-2">
+                    <span class="text-primary font-bold text-sm">Wallet Ledger &rarr;</span>
+                    <span class="text-slate-400 font-['Inter']">Asset vault and transaction history.</span>
+                </a>
+                <a href="explorer.html" class="p-4 bg-obsidian border border-slate-800 hover:border-primary/50 rounded-xl transition flex flex-col space-y-2">
+                    <span class="text-primary font-bold text-sm">Ledger Explorer &rarr;</span>
+                    <span class="text-slate-400 font-['Inter']">Audit blocks and transaction hashes.</span>
+                </a>
+                <a href="compliance.html" class="p-4 bg-obsidian border border-slate-800 hover:border-primary/50 rounded-xl transition flex flex-col space-y-2">
+                    <span class="text-primary font-bold text-sm">Compliance &rarr;</span>
+                    <span class="text-slate-400 font-['Inter']">Least Action Protocol verification.</span>
+                </a>
+                <a href="asset-register.html" class="p-4 bg-obsidian border border-slate-800 hover:border-primary/50 rounded-xl transition flex flex-col space-y-2">
+                    <span class="text-primary font-bold text-sm">Asset Minting &rarr;</span>
+                    <span class="text-slate-400 font-['Inter']">Valuation engine and Kine token mints.</span>
+                </a>
             </div>
         </div>
 
     </main>
 
     <!-- Footer -->
-    <footer class="mt-auto border-t border-slate-800 py-6 text-center text-xs text-slate-500">
-        <p>Kinepool // Global Resource Ledger &bull; Built on KUTS Revision 8 Conformance Track</p>
+    <footer class="border-t border-slate-800 bg-surface/40 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 space-y-1">
+            <p>&copy; 2026 Kinepool / Pinaleaf Advancements LLP. All rights reserved.</p>
+            <p class="font-['JetBrains_Mono']">Master Origin THRINC000 | Render Deployment: https://kinepool.onrender.com</p>
+        </div>
     </footer>
 
+    <!-- Scripts -->
     <script>
-        window.addEventListener('DOMContentLoaded', async () => {
-            const statusEl = document.getElementById('server-status');
-            const engEl = document.getElementById('engine-status');
-            try {
-                const res = await fetch('/api/health');
-                const data = await res.json();
-                document.getElementById('floor-display').textContent = `$${Number(data.kine_floor_rate_usd).toFixed(2)} USD / K`;
-                if (data.status === 'operational') {
-                    statusEl.textContent = 'Online';
-                } else {
-                    statusEl.textContent = 'Degraded';
-                    statusEl.className = 'text-lg font-semibold text-amber-400';
-                }
-                const names = Object.keys(data.engines || {});
-                const up = names.filter(n => data.engines[n]);
-                engEl.textContent = `Engines: ${up.length}/${names.length} active` + (data.database ? ` | Database: ${data.database}` : '');
-            } catch (err) {
-                statusEl.textContent = 'Offline';
-                statusEl.className = 'text-lg font-semibold text-red-400';
-                engEl.textContent = 'Engines: unreachable';
-            }
-        });
+        function updateClock() {
+            const now = new Date();
+            const utcTime = now.toISOString().replace('T', ' ').substring(0, 19);
+            document.getElementById('kuts-clock').innerText = `UTC: ${utcTime}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
     </script>
 </body>
 </html>

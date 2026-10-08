@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anchor Node Registration & Directory | Kinepool</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#0a0b0e',
+                        surface: '#12141c',
+                        primary: '#00f2fe',
+                        accent: '#4facfe'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="bg-obsidian text-slate-100 font-['Inter',sans-serif] min-h-screen flex flex-col justify-between selection:bg-primary selection:text-obsidian">
+
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-slate-800 bg-surface/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <a href="index.html" class="w-8 h-8 rounded bg-gradient-to-tr from-primary to-accent flex items-center justify-center font-bold text-obsidian text-lg hover:opacity-90 transition-opacity">Ꝃ</a>
+                <span class="font-bold tracking-wider text-lg bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">KINEPOOL</span>
+            </div>
+            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-300">
+                <a href="index.html" class="hover:text-primary transition-colors">Home</a>
+                <a href="explorer.html" class="hover:text-primary transition-colors">Explorer</a>
+                <a href="register.html" class="hover:text-primary transition-colors">Terminal Registry</a>
+                <a href="anchor-node-register.html" class="text-primary font-semibold">Anchor Registry</a>
+                <a href="asset-register.html" class="hover:text-primary transition-colors">Mint Kines</a>
+                <a href="compliance.html" class="hover:text-primary transition-colors">Compliance</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <div id="kuts-clock" class="font-['JetBrains_Mono'] text-xs text-primary bg-primary/10 px-3 py-1.5 rounded border border-primary/20">
+                    EPOCH: SYNCING...
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full space-y-12">
+        
+        <!-- Header Section -->
+        <div class="text-center max-w-2xl mx-auto space-y-3">
+            <h1 class="text-3xl font-extrabold text-white tracking-tight">Anchor Node & Operator Portal</h1>
+            <p class="text-sm text-slate-400">Provisional spatial-temporal registration under the Global Resource Registry (GRR) and Revision 8 specifications.</p>
+        </div>
+
+        <!-- Registration Form Card -->
+        <div class="bg-surface border border-slate-800 rounded-2xl p-8 space-y-6 shadow-xl">
+            <h2 class="text-lg font-bold text-white border-b border-slate-800 pb-3 flex items-center justify-between">
+                <span>Provisional Node Commissioning Form</span>
+                <span class="text-xs font-['JetBrains_Mono'] text-primary bg-primary/10 px-2.5 py-1 rounded border border-primary/20">Rev 8 Compliant</span>
+            </h2>
+
+            <form id="anchor-form" onsubmit="handleAnchorRegistration(event)" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 uppercase tracking-wider mb-2">Operator / Entity Name</label>
+                        <input type="text" id="op-name" required placeholder="e.g., Pinaleaf Advancements LLP" class="w-full bg-obsidian border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-primary">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 uppercase tracking-wider mb-2">Requested Node Callsign (3 Letters)</label>
+                        <input type="text" id="op-callsign" required maxlength="3" placeholder="e.g., KIN" class="w-full bg-obsidian border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-slate-200 font-['JetBrains_Mono'] uppercase focus:outline-none focus:border-primary">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 uppercase tracking-wider mb-2">Primary Domain Classification</label>
+                        <select id="op-domain" class="w-full bg-obsidian border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-slate-200 font-['JetBrains_Mono'] focus:outline-none focus:border-primary">
+                            <option value="02">02 - Spatial Anchor Node</option>
+                            <option value="13">13 - Structural Infrastructure</option>
+                            <option value="14">14 - Mechanical / Hardware</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 uppercase tracking-wider mb-2">Parent Master / Global Anchor Node</label>
+                        <select id="op-parent" class="w-full bg-obsidian border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-primary font-['JetBrains_Mono'] focus:outline-none focus:border-primary">
+                            <option value="THRINC000">THRINC000 - Master Origin Node (Thrissur, India)</option>
+                            <option value="ANTZZC001">ANTZZC001 - Antipodal Reference Node</option>
+                            <option value="LONINC002">LONINC002 - London, United Kingdom</option>
+                            <option value="NYCINC003">NYCINC003 - New York, United States</option>
+                            <option value="TKOINC004">TKOINC004 - Tokyo, Japan</option>
+                            <option value="SGPINC005">SGPINC005 - Singapore</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 uppercase tracking-wider mb-2">Resource-Verification Engine (RVE) Endpoint</label>
+                    <input type="url" id="op-rve" required placeholder="https://rve.kinepool.in/attest" class="w-full bg-obsidian border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-slate-200 font-['JetBrains_Mono'] focus:outline-none focus:border-primary">
+                </div>
+
+                <div class="pt-4 border-t border-slate-800 flex items-center justify-between flex-wrap gap-4">
+                    <div class="text-xs text-slate-400 font-['JetBrains_Mono']">
+                        Target Protocol: <span class="text-primary">KUTS Rev 8 (&lt;334.00 ns Drift)</span>
+                    </div>
+                    <button type="submit" id="submit-btn" class="bg-gradient-to-r from-primary to-accent text-obsidian font-semibold px-6 py-2.5 rounded-lg text-sm hover:opacity-95 transition-opacity shadow-lg shadow-primary/10">
+                        Submit Provisional Registration
+                    </button>
+                </div>
+            </form>
+
+            <!-- Success Box (Hidden by default) -->
+            <div id="success-box" class="hidden p-5 bg-obsidian border border-emerald-500/20 rounded-xl space-y-4">
+                <div class="flex items-center space-x-2 text-emerald-400 text-xs font-bold uppercase tracking-wider">
+                    <div class="h-2 w-2 bg-emerald-400 rounded-full animate-ping"></div>
+                    <span>Provisional Anchor Node Handshake Committed</span>
+                </div>
+                <div class="space-y-1">
+                    <div class="text-[11px] text-slate-400">Assigned Composite Identifier:</div>
+                    <div id="result-id" class="font-['JetBrains_Mono'] text-xs sm:text-sm text-primary bg-surface p-2.5 rounded border border-slate-800 break-all select-all"></div>
+                </div>
+                <p class="text-xs text-slate-400">
+                    Your node has been queued for synchronization verification against the Master Origin Node at Thrissur (<strong class="text-primary">THRINC000</strong>).
+                </p>
+                <button type="button" onclick="location.reload()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg text-xs transition">
+                    Register Another Node
+                </button>
+            </div>
+        </div>
+
+        <!-- Global Anchor Nodes Reference Directory -->
+        <div class="bg-surface border border-slate-800 rounded-2xl p-8 space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-white">Global Anchor Nodes (GANs) Directory</h2>
+                    <p class="text-xs text-slate-400">Level-1 reference grid architecture under KUTS Revision 8.</p>
+                </div>
+                <span class="text-xs font-['JetBrains_Mono'] text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded border border-emerald-500/20">35 Active Nodes</span>
+            </div>
+
+            <div class="overflow-x-auto font-['JetBrains_Mono'] text-xs">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="text-slate-500 uppercase text-[10px] border-b border-slate-800">
+                            <th class="p-3">Index</th>
+                            <th class="p-3">Callsign</th>
+                            <th class="p-3">Full Registry ID</th>
+                            <th class="p-3">Region / Deployment Zone</th>
+                            <th class="p-3 text-right">Status / Role</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800 text-slate-300">
+                        <tr class="hover:bg-slate-900/50 transition">
+                            <td class="p-3 text-slate-500">00</td>
+                            <td class="p-3 text-primary font-bold">THR</td>
+                            <td class="p-3 text-slate-100">THRINC000</td>
+                            <td class="p-3 text-slate-400">Thrissur, Kerala, India (10.49° N, 76.21° E)</td>
+                            <td class="p-3 text-right text-emerald-400 font-bold">Master Origin</td>
+                        </tr>
+                        <tr class="hover:bg-slate-900/50 transition">
+                            <td class="p-3 text-slate-500">01</td>
+                            <td class="p-3 text-primary font-bold">ANT</td>
+                            <td class="p-3 text-slate-100">ANTZZC001</td>
+                            <td class="p-3 text-slate-400">Antipodal Reference Node (Pacific Basin)</td>
+                            <td class="p-3 text-right text-cyan-400">Standby Reference</td>
+                        </tr>
+                        <tr class="hover:bg-slate-900/50 transition">
+                            <td class="p-3 text-slate-500">02</td>
+                            <td class="p-3 text-primary font-bold">LON</td>
+                            <td class="p-3 text-slate-100">LONINC002</td>
+                            <td class="p-3 text-slate-400">London, United Kingdom</td>
+                            <td class="p-3 text-right text-cyan-400">European Gateway</td>
+                        </tr>
+                        <tr class="hover:bg-slate-900/50 transition">
+                            <td class="p-3 text-slate-500">03</td>
+                            <td class="p-3 text-primary font-bold">NYC</td>
+                            <td class="p-3 text-slate-100">NYCINC003</td>
+                            <td class="p-3 text-slate-400">New York, United States</td>
+                            <td class="p-3 text-right text-cyan-400">North American Hub</td>
+                        </tr>
+                        <tr class="hover:bg-slate-900/50 transition">
+                            <td class="p-3 text-slate-500">04</td>
+                            <td class="p-3 text-primary font-bold">TKO</td>
+                            <td class="p-3 text-slate-100">TKOINC004</td>
+                            <td class="p-3 text-slate-400">Tokyo, Japan</td>
+                            <td class="p-3 text-right text-cyan-400">East Asian Hub</td>
+                        </tr>
+                        <tr class="hover:bg-slate-900/50 transition">
+                            <td class="p-3 text-slate-500">05</td>
+                            <td class="p-3 text-primary font-bold">SGP</td>
+                            <td class="p-3 text-slate-100">SGPINC005</td>
+                            <td class="p-3 text-slate-400">Singapore</td>
+                            <td class="p-3 text-right text-cyan-400">Southeast Asian Hub</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-surface/40 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 space-y-1">
+            <p>&copy; 2026 Kinepool / Pinaleaf Advancements LLP. All rights reserved.</p>
+            <p class="font-['JetBrains_Mono']">Anchor Node Registration Module | Master Origin THRINC000</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const utcTime = now.toISOString().replace('T', ' ').substring(0, 19);
+            document.getElementById('kuts-clock').innerText = `UTC: ${utcTime}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        function handleAnchorRegistration(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            btn.innerText = "Transmitting to Master Consensus Coordinator...";
+            btn.disabled = true;
+
+            const name = document.getElementById('op-name').value;
+            const callsign = document.getElementById('op-callsign').value.toUpperCase();
+            const domain = document.getElementById('op-domain').value;
+            const parent = document.getElementById('op-parent').value;
+
+            // Generate Revision 8 compliant composite identifier
+            const base100Payload = "00.01.13.51.71.67.97.76.61.67.66";
+            const subTick = String(Math.floor(Math.random() * 90 + 10)).padStart(2, '0');
+            const compositeId = `${domain}:${base100Payload}-${callsign}.${subTick}`;
+
+            setTimeout(() => {
+                console.log("Anchor Node Registration Committed:", { name, callsign, domain, parent, compositeId });
+                document.getElementById('anchor-form').classList.add('hidden');
+                document.getElementById('result-id').innerText = compositeId;
+                document.getElementById('success-box').classList.remove('hidden');
+            }, 1200);
+        }
+    </script>
+</body>
+</html>

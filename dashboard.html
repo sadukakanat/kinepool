@@ -1,265 +1,147 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KUTS Industry Hub | User Command Center Dashboard</title>
+    <title>Dashboard | Kinepool</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="core/auth-bridge.js"></script>
-    <script src="core/kuts-core-bridge.js"></script>
-    <script src="core/kuts-economics.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { background-color: #030712; color: #f1f5f9; font-family: 'Inter', sans-serif; }
-        .font-mono { font-family: 'Share Tech Mono', monospace; }
-        .glass-panel { background: rgba(13, 20, 32, 0.85); backdrop-filter: blur(16px); }
-        .glow-blue { box-shadow: 0 0 35px rgba(59, 130, 246, 0.12); border-color: rgba(59, 130, 246, 0.3); }
-        .tabular-nums { font-variant-numeric: tabular-nums; }
-
-        /* KUTS Universal Domain Footer Styles */
-        .kuts-domain-footer {
-            width: 100%;
-            background: rgba(7, 11, 18, 0.95);
-            border-top: 1px solid #1e2a3a;
-            padding: 20px 24px 14px;
-            margin-top: auto;
-            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-            color: #91a1b8;
-            z-index: 50;
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#0a0b0e',
+                        surface: '#12141c',
+                        primary: '#00f2fe',
+                        accent: '#4facfe'
+                    }
+                }
+            }
         }
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-        }
-        .footer-brand {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: #edf4ff;
-        }
-        .footer-brand strong { letter-spacing: 0.05em; }
-        .footer-brand small {
-            color: #687a93;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            border-left: 1px solid #1e2a3a;
-            padding-left: 8px;
-        }
-        .brand-dot {
-            width: 6px;
-            height: 6px;
-            background: #35d39a;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #35d39a;
-        }
-        .domain-nav {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 10px;
-            font-size: 12px;
-        }
-        .domain-link {
-            color: #91a1b8;
-            text-decoration: none;
-            transition: color 0.15s ease;
-        }
-        .domain-link:hover { color: #61a5ff; text-decoration: underline; }
-        .divider { color: #2a3b51; font-size: 10px; }
-        .footer-subnav {
-            max-width: 1200px;
-            margin: 16px auto 0;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            font-size: 12px;
-        }
-        .sub-link {
-            color: #91a1b8;
-            font-weight: bold;
-            text-decoration: none;
-            transition: color 0.15s ease;
-        }
-        .sub-link:hover { color: #38bdf8; }
-        .sub-divider { color: #0284c7; }
-        .footer-bottom {
-            max-width: 1200px;
-            margin: 14px auto 0;
-            padding-top: 10px;
-            border-top: 1px solid rgba(30, 42, 58, 0.5);
-            text-align: center;
-            font-size: 10px;
-            color: #5f7088;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-        }
-    </style>
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 </head>
-<body class="min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
+<body class="bg-obsidian text-slate-100 font-['Inter',sans-serif] min-h-screen flex flex-col justify-between selection:bg-primary selection:text-obsidian">
 
-    <!-- TOP TELEMETRY NAVBAR -->
-    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center font-mono font-black text-lg shadow-lg shadow-blue-500/20">Ꝃ</div>
-                <div>
-                    <h1 class="text-sm font-mono font-bold tracking-widest text-blue-400 uppercase">KUTS_COMMAND_CENTER</h1>
-                    <p class="text-[0.6rem] font-mono text-slate-500 uppercase tracking-wider">Node: THRINC000 // Operator Workspace</p>
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-slate-800 bg-surface/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <a href="index.html" class="w-8 h-8 rounded bg-gradient-to-tr from-primary to-accent flex items-center justify-center font-bold text-obsidian text-lg hover:opacity-90 transition-opacity">Ꝃ</a>
+                <span class="font-bold tracking-wider text-lg bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">KINEPOOL</span>
+            </div>
+            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-300">
+                <a href="index.html" class="hover:text-primary transition-colors">Home</a>
+                <a href="dashboard.html" class="text-primary font-semibold">Dashboard</a>
+                <a href="genesis-gateway.html" class="hover:text-primary transition-colors">Gateway</a>
+                <a href="temporal-converter.html" class="hover:text-primary transition-colors">Temporal</a>
+                <a href="explorer.html" class="hover:text-primary transition-colors">Explorer</a>
+                <a href="compliance.html" class="hover:text-primary transition-colors">Compliance</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <div id="kuts-clock" class="font-['JetBrains_Mono'] text-xs text-primary bg-primary/10 px-3 py-1.5 rounded border border-primary/20">
+                    EPOCH: SYNCING...
                 </div>
             </div>
-            <nav class="flex items-center gap-4 text-[0.7rem] font-mono uppercase tracking-widest text-slate-400">
-                <a href="browser-genesis.html" class="hover:text-blue-400 transition">Mission Control</a>
-                <span class="text-emerald-400 flex items-center gap-1.5 bg-emerald-950/40 px-2.5 py-1 rounded border border-emerald-900/40">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> ACTIVE SESSION
-                </span>
-            </nav>
         </div>
     </header>
 
-    <!-- MAIN DASHBOARD CONTENT -->
-    <main class="max-w-7xl mx-auto px-6 py-8 flex-1 w-full space-y-6">
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full space-y-8">
         
-        <!-- TOP METRICS GRID -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 font-mono">
-            <div class="glass-panel border border-slate-800 rounded-2xl p-5 glow-blue">
-                <span class="text-[0.6rem] text-slate-500 uppercase tracking-wider block mb-1">Total Settled Kines ($L$)</span>
-                <span id="metric-kines" class="text-2xl font-bold text-blue-400 tabular-nums">1,042.5000 Ꝃ</span>
-                <span class="text-[0.55rem] text-emerald-400 block mt-1">+12.4% from last sprint</span>
+        <!-- Welcome Banner -->
+        <div class="bg-surface border border-slate-800 rounded-2xl p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-xl">
+            <div class="space-y-2">
+                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-['JetBrains_Mono'] font-medium">
+                    <span class="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+                    <span>Master Origin Node: THRINC000 (Thrissur, India)</span>
+                </div>
+                <h1 class="text-3xl font-extrabold text-white tracking-tight">Operator Dashboard</h1>
+                <p class="text-sm text-slate-400">Real-time telemetry, Kine asset balances, and Least Action Protocol (LAP) distribution metrics.</p>
             </div>
-            <div class="glass-panel border border-slate-800 rounded-2xl p-5">
-                <span class="text-[0.6rem] text-slate-500 uppercase tracking-wider block mb-1">Micro-Unit Flux ($f$)</span>
-                <span id="metric-flux" class="text-2xl font-bold text-cyan-400 tabular-nums">840.00 $f$</span>
-                <span class="text-[0.55rem] text-slate-600 block mt-1">High-frequency AI logging buffer</span>
-            </div>
-            <div class="glass-panel border border-slate-800 rounded-2xl p-5">
-                <span class="text-[0.6rem] text-slate-500 uppercase tracking-wider block mb-1">Protocol Fiscal Sweep (PFS)</span>
-                <span id="metric-pfs" class="text-2xl font-bold text-amber-400 tabular-nums">15.6375 Ꝃ</span>
-                <span class="text-[0.55rem] text-slate-600 block mt-1">1.5% structural liquidity allocation</span>
-            </div>
-            <div class="glass-panel border border-slate-800 rounded-2xl p-5">
-                <span class="text-[0.6rem] text-slate-500 uppercase tracking-wider block mb-1">Regenerative Pool (RSP)</span>
-                <span id="metric-rsp" class="text-2xl font-bold text-emerald-400 tabular-nums">15.6375 Ꝃ</span>
-                <span class="text-[0.55rem] text-slate-600 block mt-1">1.5% environmental stewardship fee</span>
+            <div class="flex items-center space-x-3">
+                <a href="asset-register.html" class="bg-gradient-to-r from-primary to-accent text-obsidian font-semibold px-5 py-2.5 rounded-xl text-sm hover:opacity-95 transition shadow-lg shadow-primary/10">
+                    Mint New Kines &rarr;
+                </a>
             </div>
         </div>
 
-        <!-- SECONDARY PANELS -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            
-            <!-- RECENT ACTIVITY FEED -->
-            <div class="lg:col-span-8 glass-panel border border-slate-800 rounded-2xl p-6 font-mono">
-                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
-                    <h2 class="text-xs font-bold text-slate-200 uppercase tracking-widest">Node Activity & Settlement Stream</h2>
-                    <span class="text-[0.6rem] text-slate-500">Real-Time P2P Mesh</span>
-                </div>
-                <div class="space-y-3 text-xs" id="dashboard-activity-feed">
-                    <div class="p-3 bg-black/40 border border-slate-800 rounded-xl flex justify-between items-center">
-                        <div>
-                            <span class="text-blue-400 font-bold block">Category 12: Fiscal Governance Sweep</span>
-                            <span class="text-[0.6rem] text-slate-500">Anchor THRINC000 // 1.5% PFS + 1.5% RSP Allocation</span>
-                        </div>
-                        <span class="text-emerald-400 font-bold">+0.1500 Ꝃ</span>
-                    </div>
-                    <div class="p-3 bg-black/40 border border-slate-800 rounded-xl flex justify-between items-center">
-                        <div>
-                            <span class="text-orange-400 font-bold block">Category 03: Kinetic Resource Block</span>
-                            <span class="text-[0.6rem] text-slate-500">10.0 kWh Energy + 0.1M AI Compute Tokens</span>
-                        </div>
-                        <span class="text-emerald-400 font-bold">+0.9700 Ꝃ</span>
-                    </div>
-                </div>
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="bg-surface border border-slate-800 rounded-xl p-6 space-y-2">
+                <span class="text-xs text-slate-400 uppercase tracking-wider font-['JetBrains_Mono']">Total Kines Balance</span>
+                <div class="text-2xl font-bold text-white font-['JetBrains_Mono']">1,420.50 <span class="text-primary text-lg">Ꝃ</span></div>
+                <span class="text-xs text-emerald-400 font-['JetBrains_Mono']">+12.4% this epoch</span>
             </div>
-
-            <!-- SYSTEM STATUS & ANCHOR NODE DETAILS -->
-            <div class="lg:col-span-4 glass-panel border border-slate-800 rounded-2xl p-6 font-mono flex flex-col justify-between">
-                <div>
-                    <h2 class="text-xs font-bold text-blue-400 uppercase tracking-widest mb-4 border-b border-slate-800 pb-3">Node Telemetry</h2>
-                    <ul class="space-y-3 text-xs text-slate-300">
-                        <li class="flex justify-between">
-                            <span class="text-slate-500">Active Node ID:</span>
-                            <span class="text-emerald-400 font-bold">THRINC000</span>
-                        </li>
-                        <li class="flex justify-between">
-                            <span class="text-slate-500">Geodetic Position:</span>
-                            <span class="text-slate-200">10.4932° N, 76.2135° E</span>
-                        </li>
-                        <li class="flex justify-between">
-                            <span class="text-slate-500">Temporal Scale:</span>
-                            <span class="text-blue-300">Session-Epoch (Order 38)</span>
-                        </li>
-                        <li class="flex justify-between">
-                            <span class="text-slate-500">Floor Rate Mode:</span>
-                            <span class="text-amber-300 font-bold">ACTIVE (₹100 Floor)</span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="mt-6 pt-4 border-t border-slate-800">
-                    <a href="browser-genesis.html" class="w-full block py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-center font-bold uppercase tracking-wider text-[0.65rem] transition">
-                        Open Mission Control Globe →
-                    </a>
-                </div>
+            <div class="bg-surface border border-slate-800 rounded-xl p-6 space-y-2">
+                <span class="text-xs text-slate-400 uppercase tracking-wider font-['JetBrains_Mono']">Floor USD Valuation</span>
+                <div class="text-2xl font-bold text-white font-['JetBrains_Mono']">$2,841.00</div>
+                <span class="text-xs text-slate-400 font-['JetBrains_Mono']">Rate: $2.00 / Ꝃ Floor</span>
             </div>
+            <div class="bg-surface border border-slate-800 rounded-xl p-6 space-y-2">
+                <span class="text-xs text-slate-400 uppercase tracking-wider font-['JetBrains_Mono']">Chronometric Drift</span>
+                <div class="text-2xl font-bold text-emerald-400 font-['JetBrains_Mono']">18.42 ns</div>
+                <span class="text-xs text-slate-400 font-['JetBrains_Mono']">Threshold: &lt;334.00 ns</span>
+            </div>
+            <div class="bg-surface border border-slate-800 rounded-xl p-6 space-y-2">
+                <span class="text-xs text-slate-400 uppercase tracking-wider font-['JetBrains_Mono']">Active LAP Pool (RSP)</span>
+                <div class="text-2xl font-bold text-primary font-['JetBrains_Mono']">42.61 <span class="text-sm">Ꝃ</span></div>
+                <span class="text-xs text-slate-400 font-['JetBrains_Mono']">3.0% protocol split active</span>
+            </div>
+        </div>
 
+        <!-- Quick Module Access Links -->
+        <div class="bg-surface border border-slate-800 rounded-2xl p-8 space-y-6">
+            <h2 class="text-lg font-bold text-white border-b border-slate-800 pb-3">Decentralized Module Portals</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 font-['JetBrains_Mono'] text-xs">
+                <a href="genesis-gateway.html" class="p-4 bg-obsidian border border-slate-800 hover:border-primary/50 rounded-xl transition flex flex-col space-y-2">
+                    <span class="text-primary font-bold text-sm">Genesis Gateway &rarr;</span>
+                    <span class="text-slate-400 font-['Inter']">Initialize network connection and MCC handshakes.</span>
+                </a>
+                <a href="temporal-converter.html" class="p-4 bg-obsidian border border-slate-800 hover:border-primary/50 rounded-xl transition flex flex-col space-y-2">
+                    <span class="text-primary font-bold text-sm">Temporal Converter &rarr;</span>
+                    <span class="text-slate-400 font-['Inter']">Non-sexagesimal chronometric time synchronization.</span>
+                </a>
+                <a href="b2b-escrow.html" class="p-4 bg-obsidian border border-slate-800 hover:border-primary/50 rounded-xl transition flex flex-col space-y-2">
+                    <span class="text-primary font-bold text-sm">B2B Escrow &rarr;</span>
+                    <span class="text-slate-400 font-['Inter']">Manage multi-party resource exchange and conditional locks.</span>
+                </a>
+                <a href="freight-router.html" class="p-4 bg-obsidian border border-slate-800 hover:border-primary/50 rounded-xl transition flex flex-col space-y-2">
+                    <span class="text-primary font-bold text-sm">Freight Router &rarr;</span>
+                    <span class="text-slate-400 font-['Inter']">Spatial logistics and anchor node transit tracking.</span>
+                </a>
+                <a href="my-task.html" class="p-4 bg-obsidian border border-slate-800 hover:border-primary/50 rounded-xl transition flex flex-col space-y-2">
+                    <span class="text-primary font-bold text-sm">Operator Tasks &rarr;</span>
+                    <span class="text-slate-400 font-['Inter']">Manage node verification duties and worker sweeps.</span>
+                </a>
+                <a href="star-hunter.html" class="p-4 bg-obsidian border border-slate-800 hover:border-primary/50 rounded-xl transition flex flex-col space-y-2">
+                    <span class="text-primary font-bold text-sm">Star Hunter HUD &rarr;</span>
+                    <span class="text-slate-400 font-['Inter']">Deep-time celestial positioning and geodetic scanning.</span>
+                </a>
+            </div>
         </div>
 
     </main>
 
-    <!-- KUTS UNIVERSAL DOMAIN FOOTER -->
-    <footer class="kuts-domain-footer">
-        <div class="footer-container">
-            <div class="footer-brand">
-                <span class="brand-dot"></span>
-                <strong>KUTS Ecosystem</strong>
-                <small>Global Navigation Matrix</small>
-            </div>
-            <nav class="domain-nav" aria-label="System Domains">
-                <a href="KUTS-Module-Menu.html" class="domain-link">Core & Gateways</a>
-                <span class="divider" aria-hidden="true">•</span>
-                <a href="browser-genesis.html" class="domain-link">Browser Genesis</a>
-                <span class="divider" aria-hidden="true">•</span>
-                <a href="dashboard.html" class="domain-link font-bold text-blue-400">Industry Dashboard</a>
-                <span class="divider" aria-hidden="true">•</span>
-                <a href="genesis-gateway.html" class="domain-link">Research & Integration</a>
-                <span class="divider" aria-hidden="true">•</span>
-                <a href="treasury-core.html" class="domain-link">Kine Treasury</a>
-                <span class="divider" aria-hidden="true">•</span>
-                <a href="my-task.html" class="domain-link">My Task</a>
-                <span class="divider" aria-hidden="true">•</span>
-                <a href="index.html" class="domain-link">Tools</a>
-            </nav>
-        </div>
-
-        <div class="footer-subnav">
-            <a href="entity-registry.html" class="sub-link">Entity Registry</a>
-            <span class="sub-divider">|</span>
-            <a href="my-task.html" class="sub-link">Worker Task Workspace</a>
-            <span class="sub-divider">|</span>
-            <a href="referrals.html" class="sub-link">Referral Hub</a>
-            <span class="sub-divider">|</span>
-            <a href="ai-assistant.html" class="sub-link">AI Assistant Node</a>
-            <span class="sub-divider">|</span>
-            <a href="SEARCH-LAYER.html" class="sub-link">Search Layer</a>
-            <span class="sub-divider">|</span>
-            <a href="kine-production-engine/index.html" class="sub-link">Kine Production Engine</a>
-            <span class="sub-divider">|</span>
-            <a href="kuts-chronometry-suite/index.html" class="sub-link">KUTS Chronometry Suite</a>
-            <span class="sub-divider">|</span>
-            <a href="carbon-credit-marketplace.html" class="sub-link">Carbon Market</a>
-        </div>
-
-        <div class="footer-bottom">
-            <p>© 2026 PINALEAF ADVANCEMENTS LLP // KUTS GEODESIC MESH // ORIGIN: THRINC000 // AAROHAN 2050</p>
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-surface/40 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 space-y-1">
+            <p>&copy; 2026 Kinepool / Pinaleaf Advancements LLP. All rights reserved.</p>
+            <p class="font-['JetBrains_Mono']">Operator Dashboard | Master Origin THRINC000</p>
         </div>
     </footer>
 
+    <!-- Scripts -->
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const utcTime = now.toISOString().replace('T', ' ').substring(0, 19);
+            document.getElementById('kuts-clock').innerText = `UTC: ${utcTime}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
 </body>
 </html>

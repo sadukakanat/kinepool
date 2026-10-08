@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stewardship Reserve | Kinepool</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#0a0b0e',
+                        surface: '#12141c',
+                        primary: '#00f2fe',
+                        accent: '#4facfe'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="bg-obsidian text-slate-100 font-['Inter',sans-serif] min-h-screen flex flex-col justify-between selection:bg-primary selection:text-obsidian">
+
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-slate-800 bg-surface/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <a href="index.html" class="w-8 h-8 rounded bg-gradient-to-tr from-primary to-accent flex items-center justify-center font-bold text-obsidian text-lg hover:opacity-90 transition-opacity">Ꝃ</a>
+                <span class="font-bold tracking-wider text-lg bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">KINEPOOL</span>
+            </div>
+            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-300">
+                <a href="index.html" class="hover:text-primary transition-colors">Home</a>
+                <a href="explorer.html" class="hover:text-primary transition-colors">Explorer</a>
+                <a href="genesis-gateway.html" class="hover:text-primary transition-colors">Gateway</a>
+                <a href="reserve.html" class="text-primary font-semibold">Reserve</a>
+                <a href="compliance.html" class="hover:text-primary transition-colors">Compliance</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <div id="kuts-clock" class="font-['JetBrains_Mono'] text-xs text-primary bg-primary/10 px-3 py-1.5 rounded border border-primary/20">
+                    EPOCH: SYNCING...
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full space-y-8">
+        
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-extrabold text-white tracking-tight">Stewardship Reserve Core</h1>
+                <p class="text-sm text-slate-400 mt-1">Monitor asset distribution, 1% infrastructure sweeps, and Regenerative Stewardship Pools (RSP).</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <div class="bg-surface border border-slate-800 px-4 py-2 rounded-lg text-xs font-['JetBrains_Mono'] text-slate-300">
+                    Protocol Sweep: <span class="text-emerald-400 font-bold">ACTIVE (1%)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reserve Stat Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-surface border border-slate-800 p-6 rounded-xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl"></div>
+                <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Reserve Liquidity</p>
+                <p class="text-3xl font-bold font-['JetBrains_Mono'] text-white mt-3">8,450,210 <span class="text-primary text-xl">Ꝃ</span></p>
+                <div class="mt-4 flex items-center justify-between text-xs text-slate-400 font-['JetBrains_Mono'] border-t border-slate-800/80 pt-3">
+                    <span>Locked Value</span>
+                    <span class="text-emerald-400">+4.2% (24h)</span>
+                </div>
+            </div>
+
+            <div class="bg-surface border border-slate-800 p-6 rounded-xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-2xl"></div>
+                <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Regenerative Stewardship Pool</p>
+                <p class="text-3xl font-bold font-['JetBrains_Mono'] text-white mt-3">420,150 <span class="text-accent text-xl">ƒ</span></p>
+                <div class="mt-4 flex items-center justify-between text-xs text-slate-400 font-['JetBrains_Mono'] border-t border-slate-800/80 pt-3">
+                    <span>Allocation Rate</span>
+                    <span class="text-slate-200">1.0% per epoch</span>
+                </div>
+            </div>
+
+            <div class="bg-surface border border-slate-800 p-6 rounded-xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl"></div>
+                <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Worker & Infra Distribution</p>
+                <p class="text-3xl font-bold font-['JetBrains_Mono'] text-white mt-3">2,104.89 <span class="text-emerald-400 text-xl">𝒟</span></p>
+                <div class="mt-4 flex items-center justify-between text-xs text-slate-400 font-['JetBrains_Mono'] border-t border-slate-800/80 pt-3">
+                    <span>Dyne Metric</span>
+                    <span class="text-emerald-400">Nominal</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Asset Allocation & Management Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left 2 Cols: Recent Reserve Transactions -->
+            <div class="lg:col-span-2 bg-surface border border-slate-800 rounded-xl overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+                    <h3 class="font-semibold text-white text-sm">Reserve Settlement Stream</h3>
+                    <span class="text-xs font-['JetBrains_Mono'] text-primary">SECURE LEDGER</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-800 bg-slate-900/50 text-slate-400 font-['JetBrains_Mono'] text-xs">
+                                <th class="py-3 px-6">TRANSACTION HASH</th>
+                                <th class="py-3 px-6">POOL TYPE</th>
+                                <th class="py-3 px-6">AMOUNT</th>
+                                <th class="py-3 px-6 text-right">STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/60 font-['JetBrains_Mono'] text-xs text-slate-300">
+                            <tr>
+                                <td class="py-3 px-6 text-primary">0x8a1b...c490</td>
+                                <td class="py-3 px-6">Infrastructure Sweep</td>
+                                <td class="py-3 px-6">120.5 Ꝃ</td>
+                                <td class="py-3 px-6 text-right"><span class="text-emerald-400">SETTLED</span></td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-6 text-primary">0x3f2e...9d11</td>
+                                <td class="py-3 px-6">Regenerative Pool (RSP)</td>
+                                <td class="py-3 px-6">45.0 ƒ</td>
+                                <td class="py-3 px-6 text-right"><span class="text-emerald-400">SETTLED</span></td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 px-6 text-primary">0x7c4d...2e88</td>
+                                <td class="py-3 px-6">Worker Distribution</td>
+                                <td class="py-3 px-6">310.2 Ꝃ</td>
+                                <td class="py-3 px-6 text-right"><span class="text-emerald-400">SETTLED</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Right Col: Reserve Actions / Controls -->
+            <div class="bg-surface border border-slate-800 rounded-xl p-6 flex flex-col justify-between space-y-6">
+                <div>
+                    <h3 class="font-semibold text-white text-sm mb-2">Protocol Controls</h3>
+                    <p class="text-xs text-slate-400 mb-6">Initiate liquidity verification or adjust automated distribution parameters.</p>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-obsidian border border-slate-800 p-3 rounded-lg">
+                            <span class="text-xs text-slate-400 block">Master Node Validation</span>
+                            <span class="text-sm font-['JetBrains_Mono'] text-white font-semibold">THRINC000-RES</span>
+                        </div>
+                        <div class="bg-obsidian border border-slate-800 p-3 rounded-lg">
+                            <span class="text-xs text-slate-400 block">Current Epoch Cycle</span>
+                            <span class="text-sm font-['JetBrains_Mono'] text-primary font-semibold">#14,290 / 64-Order</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="w-full bg-gradient-to-r from-primary to-accent text-obsidian font-semibold py-2.5 rounded-lg text-sm hover:opacity-95 transition-opacity shadow-lg shadow-primary/10">
+                    Verify Reserve State
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-surface/40 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 space-y-1">
+            <p>&copy; 2026 Kinepool / Pinaleaf Advancements LLP. All rights reserved.</p>
+            <p class="font-['JetBrains_Mono']">Protocol v2.4 | Reserve Core Module</p>
+        </div>
+    </footer>
+
+    <!-- Script for Live Clock -->
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const utcTime = now.toISOString().replace('T', ' ').substring(0, 19);
+            document.getElementById('kuts-clock').innerText = `UTC: ${utcTime}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+</html>

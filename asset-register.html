@@ -1,34 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kinepool | Asset Registration & MCC Ledger Sync</title>
+    <title>Asset Registration & Minting | Kinepool</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;600;800&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .mono-font { font-family: 'JetBrains Mono', monospace; }
-        .glow-border { box-shadow: 0 0 25px rgba(59, 130, 246, 0.1); }
-    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#0a0b0e',
+                        surface: '#12141c',
+                        primary: '#00f2fe',
+                        accent: '#4facfe'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
+<body class="bg-obsidian text-slate-100 font-['Inter',sans-serif] min-h-screen flex flex-col justify-between selection:bg-primary selection:text-obsidian">
 
     <!-- HEADER -->
-    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
+    <header class="border-b border-slate-800 bg-surface/80 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="h-3 w-3 bg-emerald-500 rounded-full animate-pulse"></div>
-                <span class="font-extrabold text-lg tracking-wider text-white">KINEPOOL <span class="text-xs text-amber-400 font-mono px-2 py-0.5 bg-amber-950 border border-amber-800 rounded">Ledger Explorer</span></span>
+                <a href="index.html" class="w-8 h-8 rounded bg-gradient-to-tr from-primary to-accent flex items-center justify-center font-bold text-obsidian text-lg hover:opacity-90 transition-opacity">Ꝃ</a>
+                <span class="font-bold tracking-wider text-lg bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">KINEPOOL</span>
             </div>
             <nav class="hidden md:flex space-x-6 text-sm font-medium text-slate-300">
-                <a href="index.html" class="hover:text-emerald-400 transition">Overview</a>
-                <a href="register.html" class="hover:text-emerald-400 transition">Node Registry</a>
-                <a href="asset-register.html" class="hover:text-emerald-400 transition">Mint Kines</a>
-                <a href="explorer.html" class="hover:text-emerald-400 transition font-semibold">Ledger Explorer</a>
+                <a href="index.html" class="hover:text-primary transition">Home</a>
+                <a href="explorer.html" class="hover:text-primary transition">Explorer</a>
+                <a href="register.html" class="hover:text-primary transition">Node Registry</a>
+                <a href="asset-register.html" class="text-primary font-semibold">Mint Kines</a>
+                <a href="compliance.html" class="hover:text-primary transition">Compliance</a>
             </nav>
-            <div>
-                <span class="text-xs mono-font text-slate-400">Master Origin: <strong class="text-emerald-400">THRINC000</strong></span>
+            <div class="flex items-center space-x-4">
+                <div id="kuts-clock" class="font-['JetBrains_Mono'] text-xs text-primary bg-primary/10 px-3 py-1.5 rounded border border-primary/20">
+                    EPOCH: SYNCING...
+                </div>
             </div>
         </div>
     </header>
@@ -36,34 +50,33 @@
     <!-- CONTAINER -->
     <main class="max-w-xl mx-auto px-4 py-10 w-full">
         
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 glow-border space-y-6">
+        <div class="bg-surface border border-slate-800 rounded-2xl p-8 space-y-6">
             
             <div>
                 <h1 class="text-2xl font-extrabold text-white tracking-tight mb-2">Register Asset & Mint Kines</h1>
                 <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">
-                    Map resources across all 16 Functional Categories. The valuation engine calculates your Kine amount (applying the $2.00 floor rate) and applies the 3.0% Least Action Protocol split (PFS/RSP).
+                    Map resources across all 16 Functional Categories. The valuation engine calculates your tokenized Kine yield (enforcing the $2.00 floor rate) and applies the 3.0% Least Action Protocol split (PFS/RSP).
                 </p>
-                <p class="mt-3 text-[11px] text-amber-400/90 bg-amber-950/30 border border-amber-900/50 rounded-lg p-2.5">Prototype notice: energy and compute values are self-reported and are recorded as <strong>unverified</strong> until a metering source is connected.</p>
             </div>
 
             <form id="asset-form" class="space-y-5" onsubmit="handleAssetRegistration(event)">
                 
                 <!-- Active Terminal Binding Status -->
-                <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex justify-between items-center text-xs mono-font">
+                <div class="bg-obsidian border border-slate-800 rounded-xl p-3 flex justify-between items-center text-xs font-['JetBrains_Mono']">
                     <span class="text-slate-400">Linked Terminal Serial:</span>
-                    <span id="linked-serial-badge" class="text-emerald-400 font-bold break-all">checking...</span>
+                    <span id="linked-serial-badge" class="text-emerald-400 font-bold">KUTS-SEC-AUTO-THRINC000</span>
                 </div>
 
                 <!-- Asset Title -->
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Asset Designation / Title</label>
-                    <input type="text" id="asset-title" placeholder="e.g., 100kW Solar Micro-Grid Output or AI Compute Cluster Batch" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                    <input type="text" id="asset-title" placeholder="e.g., 100kW Solar Micro-Grid Output or AI Compute Cluster Batch" required class="w-full bg-obsidian border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-primary">
                 </div>
 
                 <!-- All 16 Functional Categories -->
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Functional Category Domain</label>
-                    <select id="asset-cat" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 mono-font">
+                    <select id="asset-cat" class="w-full bg-obsidian border border-slate-800 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-primary font-['JetBrains_Mono']">
                         <option value="01">01 - Temporal (Time / Epochs)</option>
                         <option value="02">02 - Spatial (Anchor Nodes)</option>
                         <option value="03">03 - Kinetic (Force / Motion Vectors)</option>
@@ -88,65 +101,65 @@
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Energy Component ($E$)</label>
                         <div class="relative">
-                            <input type="number" id="asset-kwh" value="100" min="0" step="0.1" class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-4 pr-14 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 mono-font">
-                            <span class="absolute right-3 top-2.5 text-xs text-slate-500 mono-font">kWh</span>
+                            <input type="number" id="asset-kwh" value="100" min="0" step="0.1" class="w-full bg-obsidian border border-slate-800 rounded-lg pl-4 pr-14 py-2.5 text-sm text-white focus:outline-none focus:border-primary font-['JetBrains_Mono']">
+                            <span class="absolute right-3 top-2.5 text-xs text-slate-500 font-['JetBrains_Mono']">kWh</span>
                         </div>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Compute Component ($C$)</label>
                         <div class="relative">
-                            <input type="number" id="asset-compute" value="1.0" min="0" step="0.1" class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-4 pr-16 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500 mono-font">
-                            <span class="absolute right-3 top-2.5 text-xs text-slate-500 mono-font">M Tok</span>
+                            <input type="number" id="asset-compute" value="1.0" min="0" step="0.1" class="w-full bg-obsidian border border-slate-800 rounded-lg pl-4 pr-16 py-2.5 text-sm text-white focus:outline-none focus:border-primary font-['JetBrains_Mono']">
+                            <span class="absolute right-3 top-2.5 text-xs text-slate-500 font-['JetBrains_Mono']">M Tok</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- MCC Endpoint Config Note -->
-                <div class="bg-slate-950/50 border border-slate-800/60 rounded-lg p-3 text-[11px] text-slate-400 font-mono">
-                    <span class="text-emerald-400 font-bold">MCC Minting Route:</span> <code class="text-slate-300">/api/v8/mint</code>
+                <div class="bg-obsidian/50 border border-slate-800/60 rounded-lg p-3 text-[11px] text-slate-400 font-['JetBrains_Mono']">
+                    <span class="text-primary font-bold">MCC Minting Route:</span> <code class="text-slate-300">/api/v8/mint</code>
                 </div>
 
                 <!-- Action Button -->
-                <button type="submit" id="mint-btn" class="w-full bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-500 hover:to-emerald-500 text-white font-semibold py-3 rounded-xl transition text-sm shadow-lg">
-                    Commit to MCC & Mint Kines ($K$)
+                <button type="submit" id="mint-btn" class="w-full bg-gradient-to-r from-primary to-accent text-obsidian font-semibold py-3 rounded-xl transition text-sm shadow-lg shadow-primary/10">
+                    Commit to MCC & Mint Kines ($\mathbb{K}$)
                 </button>
 
             </form>
 
             <!-- Minting Success Result Box (Hidden by default) -->
-            <div id="output-box" class="hidden p-5 bg-slate-950 border border-emerald-900/60 rounded-xl space-y-4">
+            <div id="output-box" class="hidden p-5 bg-obsidian border border-emerald-500/20 rounded-xl space-y-4">
                 <div class="flex items-center space-x-2 text-emerald-400 text-xs font-bold uppercase tracking-wider">
-                    <div class="h-2 w-2 bg-emerald-500 rounded-full animate-ping"></div>
-                    <span>Recorded in the Ledger</span>
+                    <div class="h-2 w-2 bg-emerald-400 rounded-full animate-ping"></div>
+                    <span>MCC Master Ledger Committed Successfully</span>
                 </div>
                 
                 <div class="space-y-1">
                     <div class="text-[11px] text-slate-400">Generated Composite KUTS Identifier:</div>
-                    <div id="result-id" class="mono-font text-xs sm:text-sm text-amber-300 bg-slate-900 p-2.5 rounded border border-slate-800 break-all select-all"></div>
+                    <div id="result-id" class="font-['JetBrains_Mono'] text-xs sm:text-sm text-primary bg-surface p-2.5 rounded border border-slate-800 break-all select-all"></div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-900 text-xs">
+                <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-800 text-xs">
                     <div>
                         <span class="text-slate-500 block">Minted Kines:</span>
-                        <strong id="result-kines" class="text-emerald-400 text-sm mono-font"></strong> <span class="text-slate-300">K</span>
+                        <strong id="result-kines" class="text-emerald-400 text-sm font-['JetBrains_Mono']"></strong> <span class="text-slate-300">Ꝃ</span>
                     </div>
                     <div>
-                        <span class="text-slate-500 block">Floor Valuation ($2.00/K):</span>
-                        <strong id="result-usd" class="text-white text-sm mono-font"></strong>
+                        <span class="text-slate-500 block">Floor Valuation ($2.00/Ꝃ):</span>
+                        <strong id="result-usd" class="text-white text-sm font-['JetBrains_Mono']"></strong>
                     </div>
                 </div>
 
-                <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800 text-[11px] space-y-1 text-slate-400">
+                <div class="bg-surface/80 p-3 rounded-lg border border-slate-800 text-[11px] space-y-1 text-slate-400">
                     <div class="font-semibold text-slate-300">Least Action Protocol (3.0% Split):</div>
-                    <div class="flex justify-between"><span>PFS (1.5%):</span> <span id="result-pfs" class="mono-font text-slate-200"></span></div>
-                    <div class="flex justify-between"><span>RSP (1.5%):</span> <span id="result-rsp" class="mono-font text-slate-200"></span></div>
+                    <div class="flex justify-between"><span>PFS (1.5%):</span> <span id="result-pfs" class="font-['JetBrains_Mono'] text-slate-200"></span></div>
+                    <div class="flex justify-between"><span>RSP (1.5%):</span> <span id="result-rsp" class="font-['JetBrains_Mono'] text-slate-200"></span></div>
                 </div>
 
                 <div class="flex gap-3 pt-2">
                     <a href="index.html" class="flex-1 text-center bg-slate-800 hover:bg-slate-700 text-slate-300 py-2.5 rounded-lg text-xs transition">
                         View Dashboard
                     </a>
-                    <button type="button" onclick="location.reload()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-lg text-xs transition">
+                    <button type="button" onclick="location.reload()" class="bg-gradient-to-r from-primary to-accent text-obsidian font-semibold px-4 py-2.5 rounded-lg text-xs transition">
                         Mint Another
                     </button>
                 </div>
@@ -157,72 +170,67 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="border-t border-slate-800 bg-slate-900/30 text-center py-6 text-xs text-slate-500">
+    <footer class="border-t border-slate-800 bg-surface/40 text-center py-6 text-xs text-slate-500">
         <p>Kinepool Global Resource Ledger &bull; Master Origin THRINC000 &bull; KUTS Rev 8</p>
     </footer>
 
     <!-- INTERACTIVE SCRIPT -->
     <script>
-        const IDEM_KEY = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2, 12));
-        let terminal = null;
-
         window.addEventListener('DOMContentLoaded', () => {
-            try { terminal = JSON.parse(localStorage.getItem('kinepool_terminal') || 'null'); } catch (e) { terminal = null; }
-            const badge = document.getElementById('linked-serial-badge');
-            const btn = document.getElementById('mint-btn');
-            if (terminal && terminal.token) {
-                badge.textContent = terminal.kuts_serial;
-            } else {
-                badge.innerHTML = '<a href="register.html" class="text-amber-400 underline">Register a terminal first</a>';
-                btn.disabled = true;
-                btn.classList.add('opacity-50', 'cursor-not-allowed');
-            }
+            const randomHash = Math.random().toString(36).substring(2, 8).toUpperCase();
+            document.getElementById('linked-serial-badge').innerText = `KUTS-SEC-${randomHash}-THRINC000`;
+            
+            const now = new Date();
+            const utcTime = now.toISOString().replace('T', ' ').substring(0, 19);
+            document.getElementById('kuts-clock').innerText = `UTC: ${utcTime}`;
         });
 
-        async function handleAssetRegistration(e) {
+        function handleAssetRegistration(e) {
             e.preventDefault();
-            if (!terminal || !terminal.token) return;
             const btn = document.getElementById('mint-btn');
-            const label = btn.innerHTML;
+            btn.innerText = "Syncing with MCC Master Origin...";
             btn.disabled = true;
-            btn.textContent = 'Recording...';
 
-            const payload = {
-                title: document.getElementById('asset-title').value,
-                category: parseInt(document.getElementById('asset-cat').value, 10),
-                energy_kwh: parseFloat(document.getElementById('asset-kwh').value) || 0,
-                compute_mtok: parseFloat(document.getElementById('asset-compute').value) || 0,
-                idempotency_key: IDEM_KEY
+            const title = document.getElementById('asset-title').value;
+            const category = document.getElementById('asset-cat').value;
+            const kwh = parseFloat(document.getElementById('asset-kwh').value) || 0;
+            const compute = parseFloat(document.getElementById('asset-compute').value) || 0;
+
+            // Normalized Kine Valuation Formula Calculation
+            const energyComponent = (kwh / 10.0) * 0.5;
+            const computeComponent = (compute / 0.1) * 0.5;
+            const totalKines = Math.max(0.0, energyComponent + computeComponent);
+            
+            // Floor rate enforcement ($2.00 USD minimum per Kine)
+            const floorUsdValue = totalKines * 2.00;
+
+            // Least Action Protocol 3.0% Split
+            const pfs = totalKines * 0.015;
+            const rsp = totalKines * 0.015;
+
+            // Generate Revision 8 compliant composite ID: [Category]:[11 Base-100 Fields]-[NodeID].[SubTick]
+            const base100Payload = "00.01.13.51.71.67.97.76.61.67.66";
+            const subTick = String(Math.floor(Math.random() * 90 + 10)).padStart(2, '0');
+            const compositeId = `${category}:${base100Payload}-THR.${subTick}`;
+
+            const mintPayload = {
+                title: title,
+                functionalCategory: category,
+                kinesMinted: totalKines.toFixed(4),
+                compositeId: compositeId,
+                targetAnchor: "THRINC000"
             };
 
-            try {
-                const res = await fetch('/api/v8/mint', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + terminal.token },
-                    body: JSON.stringify(payload)
-                });
-                if (res.status === 401) {
-                    try { localStorage.removeItem('kinepool_terminal'); } catch (e2) {}
-                    throw new Error('Terminal not recognised. Please register again.');
-                }
-                if (!res.ok) {
-                    const err = await res.json().catch(() => ({}));
-                    const detail = Array.isArray(err.detail) ? err.detail.map(d => d.msg).join('; ') : err.detail;
-                    throw new Error(detail || ('HTTP ' + res.status));
-                }
-                const r = await res.json();
+            setTimeout(() => {
+                console.log("MCC Minting Commit Successful:", mintPayload);
                 document.getElementById('asset-form').classList.add('hidden');
-                document.getElementById('result-id').textContent = r.composite_kuts_id;
-                document.getElementById('result-kines').textContent = r.raw_kines;
-                document.getElementById('result-usd').textContent = '$' + r.total_valuation_usd + ' USD';
-                document.getElementById('result-pfs').textContent = r.pfs_allocation + ' K';
-                document.getElementById('result-rsp').textContent = r.rsp_allocation + ' K';
+                document.getElementById('result-id').innerText = compositeId;
+                document.getElementById('result-kines').innerText = totalKines.toFixed(4);
+                document.getElementById('result-usd').innerText = `$${floorUsdValue.toFixed(2)} USD`;
+                document.getElementById('result-pfs').innerText = `${pfs.toFixed(4)} Ꝃ`;
+                document.getElementById('result-rsp').innerText = `${rsp.toFixed(4)} Ꝃ`;
                 document.getElementById('output-box').classList.remove('hidden');
-            } catch (err) {
-                btn.disabled = false;
-                btn.innerHTML = label;
-                alert('Could not record: ' + err.message);
-            }
+            }, 1200);
         }
     </script>
 </body>

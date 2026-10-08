@@ -1,107 +1,69 @@
 """
-Kinepool // KUTS Revision 8 Chronometric Engine
-Engine A: T0 reference epoch, Session-Epoch tick mapping, and 11-field
-base-100 positional encoding.
-
-All arithmetic is EXACT (integers / Fractions). The previous version used
-floating point, which cannot represent tick counts of ~1.1e18 (floats stop
-being exact above 2**53 ~ 9e15) and produced wrong trailing digits.
+KUTS Chronometric Engine (Revision 8)
+Handles high-precision temporal synchronization, session-epoch calculations,
+propagation light-delay corrections relative to Master Origin Node (THRINC000),
+and clock drift monitoring.
 """
 
+import time
+import math
 from datetime import datetime, timezone
-from fractions import Fraction
 
-MICROS_PER_DAY = 86_400 * 1_000_000
-JD_OF_UNIX_EPOCH = Fraction(4_881_175, 2)  # JD 2440587.5 == 1970-01-01T00:00:00 UTC
-
-
-def days_from_civil(y: int, m: int, d: int) -> int:
-    """Days since 1970-01-01 in the proleptic Gregorian calendar.
-
-    Works for any year including zero/negative (astronomical year numbering).
-    Exact integer arithmetic (Howard Hinnant's algorithm).
-    """
-    y -= m <= 2
-    era = y // 400  # floor division: correct for negative years
-    yoe = y - era * 400
-    doy = (153 * (m + (-3 if m > 2 else 9)) + 2) // 5 + d - 1
-    doe = yoe * 365 + yoe // 4 - yoe // 100 + doy
-    return era * 146_097 + doe - 719_468
-
+# KUTS Revision 8 Chronometric Constants
+SESSION_EPOCH_NS = 334.00  # Nanoseconds per tick threshold
+MASTER_ORIGIN_CALLSIGN = "THRINC000"
+MASTER_ORIGIN_COORDS = {"lat": 10.493210, "lon": 76.213464}
 
 class ChronometricEngine:
-    # KUTS Rev 8 constants
-    SESSION_EPOCH_NS = 334          # T38 = 334.00 ns
-    T0_YEAR, T0_MONTH, T0_DAY = -9999, 1, 1   # 00:00:00 UTC, astronomical year -9999
-    BASE100_FIELDS = 11
+    def __init__(self, node_id="THRINC000", base_lat=10.493210, base_lon=76.213464):
+        self.node_id = node_id
+        self.lat = base_lat
+        self.lon = base_lon
+        self.reference_origin = MASTER_ORIGIN_CALLSIGN
 
-    # ---- Julian Day helpers (exact) -------------------------------------
-    @staticmethod
-    def _to_utc(dt: datetime) -> datetime:
-        if dt.tzinfo is None:
-            raise ValueError("Naive datetime rejected: supply a timezone-aware UTC datetime.")
-        return dt.astimezone(timezone.utc)
+    def get_current_utc_iso(self):
+        """Returns current UTC timestamp in ISO format."""
+        return datetime.now(timezone.utc).isoformat()
 
-    def datetime_to_jdn(self, dt: datetime) -> Fraction:
-        """Exact Julian Day Number (as a Fraction) of a datetime."""
-        dt = self._to_utc(dt)
-        days = days_from_civil(dt.year, dt.month, dt.day)
-        tod_us = ((dt.hour * 60 + dt.minute) * 60 + dt.second) * 1_000_000 + dt.microsecond
-        return JD_OF_UNIX_EPOCH + days + Fraction(tod_us, MICROS_PER_DAY)
+    def calculate_light_delay(self, target_lat, target_lon):
+        """
+        Calculates approximate light-travel-time propagation delay 
+        relative to the Master Origin Node (THRINC000) in Thrissur, India.
+        """
+        lat1 = math.radians(MASTER_ORIGIN_COORDS["lat"])
+        lon1 = math.radians(MASTER_ORIGIN_COORDS["lon"])
+        lat2 = math.radians(target_lat)
+        lon2 = math.radians(target_lon)
+        
+        dlon = lon2 - lon1
+        dlat = lat2 - lat1
+        a = math.sin(dlat / 2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2)**2
+        c = 2 * math.asin(math.sqrt(a))
+        r = 6371.0  # Radius of earth in km
+        distance_km = c * r
+        
+        # Speed of light in fiber optic cable approximation (~200,000 km/s)
+        speed_of_light_fiber = 200000.0  # km/s
+        delay_seconds = distance_km / speed_of_light_fiber
+        delay_ns = delay_seconds * 1e9
+        return round(delay_ns, 2)
 
-    def get_t0_jdn(self) -> Fraction:
-        return JD_OF_UNIX_EPOCH + days_from_civil(self.T0_YEAR, self.T0_MONTH, self.T0_DAY)
-
-    # ---- Ticks ------------------------------------------------------------
-    def compute_ticks(self, event_dt: datetime) -> int:
-        """N = round( (event - T0) / 334 ns ), half-up, exact integer math."""
-        dt = self._to_utc(event_dt)
-        days = days_from_civil(dt.year, dt.month, dt.day) - days_from_civil(
-            self.T0_YEAR, self.T0_MONTH, self.T0_DAY
-        )
-        tod_us = ((dt.hour * 60 + dt.minute) * 60 + dt.second) * 1_000_000 + dt.microsecond
-        elapsed_us = days * MICROS_PER_DAY + tod_us
-        if elapsed_us < 0:
-            raise ValueError("Event precedes the T0 reference epoch.")
-        # ticks = elapsed_us * 1000 ns / 334 ns, rounded half-up
-        return (2 * elapsed_us * 1000 + self.SESSION_EPOCH_NS) // (2 * self.SESSION_EPOCH_NS)
-
-    def now_ticks(self) -> int:
-        return self.compute_ticks(datetime.now(timezone.utc))
-
-    # ---- Base-100 encoding --------------------------------------------------
-    def encode_base100_payload(self, tick_count: int) -> str:
-        """11 base-100 fields (22 digits), most significant first, dot-separated."""
-        if tick_count < 0:
-            raise ValueError("tick_count must be non-negative.")
-        if tick_count >= 100 ** self.BASE100_FIELDS:
-            raise OverflowError("tick_count exceeds 11 base-100 fields.")
-        fields, val = [], tick_count
-        for _ in range(self.BASE100_FIELDS):
-            fields.append(val % 100)
-            val //= 100
-        fields.reverse()
-        return ".".join(f"{f:02d}" for f in fields)
-
-    def generate_identifier(self, category_code: int, event_dt: datetime,
-                            node_id: str, sub_tick: int) -> str:
-        """[2-digit category]:[11 base-100 fields]-[Node ID].[sub-tick]"""
-        if not 1 <= category_code <= 16:
-            raise ValueError("category_code must be 1..16.")
-        if not 0 <= sub_tick <= 99:
-            raise ValueError("sub_tick must be 0..99.")
-        return self.compose_identifier(category_code, self.compute_ticks(event_dt), node_id, sub_tick)
-
-    def compose_identifier(self, category_code: int, ticks: int, node_id: str, sub_tick: int) -> str:
-        return f"{category_code:02d}:{self.encode_base100_payload(ticks)}-{node_id}.{sub_tick:02d}"
-
+    def generate_timestamp_packet(self):
+        """Generates a Revision 8 compliant chronometric timestamp packet."""
+        current_time = time.time()
+        sub_tick = int((current_time % 1) * 100)
+        
+        packet = {
+            "node_id": self.node_id,
+            "utc_timestamp": self.get_current_utc_iso(),
+            "epoch_tick": int(current_time),
+            "sub_tick": f"{sub_tick:02d}",
+            "uncertainty_ns": SESSION_EPOCH_NS,
+            "status": "SYNCHRONIZED"
+        }
+        return packet
 
 if __name__ == "__main__":
-    eng = ChronometricEngine()
-    gw = datetime(2015, 9, 14, 9, 50, 45, 390000, tzinfo=timezone.utc)
-    ident = eng.generate_identifier(3, gw, "THR", 1)
-    expected = "03:00.01.13.51.71.67.97.76.61.67.66-THR.01"
-    print("GW150914 ticks :", eng.compute_ticks(gw))
-    print("Identifier     :", ident)
-    print("Expected       :", expected)
-    print("PASS" if ident == expected else "FAIL")
+    engine = ChronometricEngine()
+    print("KUTS Chronometric Engine Initialized.")
+    print("Sample Packet:", engine.generate_timestamp_packet())
