@@ -3,7 +3,7 @@ KUTS Master Consensus Coordinator (MCC) Main Application (Revision 8)
 FastAPI entrypoint integrating database initialization, node registration,
 chronometric synchronization, asset minting, ledger transactions, and RVE verification.
 """
-
+import os
 from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -34,7 +34,6 @@ app.add_middleware(
 )
 
 # Mount static files directory (if you have CSS/JS assets in a "static" folder)
-# Remove or adjust this line if your assets are structured differently.
 try:
     app.mount("/static", StaticFiles(directory="static"), name="static")
 except Exception:
@@ -125,6 +124,20 @@ def verify_attestation(node_id: str, kwh: float, compute: float, signature: str)
     if not is_valid:
         raise HTTPException(status_code=403, detail="Resource attestation validation failed.")
     return {"node_id": node_id, "attestation": "SUCCESS", "status": "VERIFIED"}
+
+# Dynamic page handler placed after app definition so links like dashboard.html, admin.html open correctly
+@app.get("/{page_name}")
+async def serve_secondary_pages(page_name: str):
+    """Dynamically serves HTML ecosystem pages (dashboard.html, admin.html, etc.)."""
+    if page_name.startswith("api/") or page_name in ["docs", "redoc", "openapi.json"]:
+        raise HTTPException(status_code=404, detail="Not Found")
+    
+    target_file = page_name if page_name.endswith(".html") else f"{page_name}.html"
+    
+    if os.path.exists(target_file):
+        return FileResponse(target_file)
+        
+    raise HTTPException(status_code=404, detail="Page not found")
 
 if __name__ == "__main__":
     import uvicorn
