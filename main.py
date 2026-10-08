@@ -5,7 +5,9 @@ chronometric synchronization, asset minting, ledger transactions, and RVE verifi
 """
 
 from fastapi import FastAPI, HTTPException, status
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 # Import modular backend components
 from database import init_database
@@ -31,6 +33,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount static files directory (if you have CSS/JS assets in a "static" folder)
+# Remove or adjust this line if your assets are structured differently.
+try:
+    app.mount("/static", StaticFiles(directory="static"), name="static")
+except Exception:
+    pass
+
 @app.on_event("startup")
 def startup_event():
     """Initializes the SQLite database schema upon application startup."""
@@ -38,7 +47,12 @@ def startup_event():
     print("KUTS MCC FastAPI Backend initialized successfully for https://kinepool.onrender.com")
 
 @app.get("/")
-def read_root():
+def serve_index():
+    """Serves the frontend index.html file at the root URL."""
+    return FileResponse("index.html")
+
+@app.get("/api/status")
+def system_status():
     """System status and Master Origin verification endpoint."""
     return {
         "system": "Kinepool Master Consensus Coordinator (MCC)",
