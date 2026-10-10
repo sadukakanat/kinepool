@@ -1,0 +1,43 @@
+name: Deploy to Cloud Run from GitHub
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Authorize Docker to Artifact Registry
+        run: gcloud auth configure-docker asia-south1-docker.pkg.dev
+
+      - name: Build and Push Container
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kinepool-repo/kinepool-service:latest
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: kinepool-service
+          image: asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/kinepool-repo/kinepool-service:latest
+          region: asia-south1
+          platform: managed
+          allow-unauthenticated: true
+          env_vars: |-
+            ENVIRONMENT=production
+            MASTER_ORIGIN_NODE_ID=THRINC000

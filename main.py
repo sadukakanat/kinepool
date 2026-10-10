@@ -24,10 +24,10 @@ app = FastAPI(
     version="8.0.0"
 )
 
-# Configure CORS for Render production and local development testing
+# Configure CORS for Cloud Run production and local development testing
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows requests from https://kinepool.onrender.com and local frontends
+    allow_origins=["*"],  # Allows requests from Cloud Run domain and local frontends
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -41,9 +41,9 @@ except Exception:
 
 @app.on_event("startup")
 def startup_event():
-    """Initializes the SQLite database schema upon application startup."""
+    """Initializes the PostgreSQL database schema upon application startup."""
     init_database()
-    print("KUTS MCC FastAPI Backend initialized successfully for https://kinepool.onrender.com")
+    print("KUTS MCC FastAPI Backend initialized successfully for Google Cloud Run.")
 
 @app.get("/")
 def serve_index():
@@ -141,4 +141,7 @@ async def serve_secondary_pages(page_name: str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=5000, reload=True)
+    # Respect PORT environment variable if present, default to 8080 for local/Cloud Run testing
+    port = int(os.environ.get("PORT", 8080))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
+    
