@@ -92,7 +92,9 @@
 
 <script>
     let isLoginMode = false;
-    const API_URL = 'http://localhost:5000/api/auth';
+    const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:5000/api/auth' 
+    : '/api/auth';
 
     function toggleMode() {
         isLoginMode = !isLoginMode;
