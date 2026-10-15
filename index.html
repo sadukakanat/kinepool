@@ -3,30 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kinepool - Authentication Portal</title>
+    <title>Kinepool - Global Resource Ledger Dashboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f6f9;
             margin: 0;
-            padding: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            padding: 20px;
         }
         .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .card {
             background: white;
-            padding: 30px;
+            padding: 25px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
+            margin-bottom: 20px;
         }
-        h2 { text-align: center; color: #333; }
+        h2, h3 { color: #333; margin-top: 0; }
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; color: #666; font-size: 14px; }
-        input {
+        label { display: block; margin-bottom: 5px; color: #666; font-size: 14px; font-weight: bold; }
+        input, select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
@@ -34,16 +33,17 @@
             box-sizing: border-box;
         }
         button {
-            width: 100%;
-            padding: 10px;
+            padding: 10px 15px;
             background: #007bff;
             color: white;
             border: none;
             border-radius: 4px;
-            font-size: 16px;
+            font-size: 15px;
             cursor: pointer;
         }
         button:hover { background: #0056b3; }
+        .btn-danger { background: #dc3545; }
+        .btn-danger:hover { background: #c82333; }
         .toggle {
             text-align: center;
             margin-top: 15px;
@@ -52,7 +52,7 @@
             cursor: pointer;
         }
         .result {
-            margin-top: 20px;
+            margin-top: 15px;
             padding: 10px;
             background: #e9ecef;
             border-radius: 4px;
@@ -61,40 +61,143 @@
             white-space: pre-wrap;
         }
         .hidden { display: none; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 13px; }
+        th { background: #f1f3f5; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2 id="form-title">Kinepool Sign Up</h2>
-    
-    <div class="form-group">
-        <label>Email Address</label>
-        <input type="email" id="email" placeholder="user@pinaleaf.com">
+    <!-- AUTHENTICATION VIEW -->
+    <div id="auth-card" class="card">
+        <h2 id="form-title">Kinepool Sign Up</h2>
+        
+        <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="email" placeholder="user@pinaleaf.com">
+        </div>
+        
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="••••••••">
+        </div>
+
+        <div class="form-group" id="node-group">
+            <label>Assigned Node Callsign</label>
+            <input type="text" id="assignedNode" value="THR">
+        </div>
+
+        <button id="submit-btn" onclick="handleAuth()">Sign Up</button>
+
+        <div class="toggle" onclick="toggleMode()">Already have an account? Log In</div>
+
+        <div id="auth-result" class="result hidden"></div>
     </div>
-    
-    <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="password" placeholder="••••••••">
+
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboard-card" class="card hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 20px;">
+            <div>
+                <h2>Kinepool Operational Dashboard</h2>
+                <small id="user-info" style="color: #666;"></small>
+            </div>
+            <button class="btn-danger" onclick="logout()">Log Out</button>
+        </div>
+
+        <!-- System Status Bar -->
+        <div style="background: #e8f4fd; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;">
+            <strong>System Status:</strong> <span id="sys-status">Connecting...</span> | 
+            <strong>Master Node:</strong> THRINC000 | 
+            <strong>Current Ticks:</strong> <span id="sys-ticks">---</span>
+        </div>
+
+        <div class="grid">
+            <!-- Register Resource -->
+            <div class="card" style="box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+                <h3>Register Resource</h3>
+                <div class="form-group">
+                    <label>Composite Identifier</label>
+                    <input type="text" id="res-id" value="03:00000000.000000000000-THRINC000.01">
+                </div>
+                <div class="form-group">
+                    <label>Category Code (e.g., 03, 12)</label>
+                    <input type="text" id="res-cat" value="03">
+                </div>
+                <div class="form-group">
+                    <label>Resource Name</label>
+                    <input type="text" id="res-name" placeholder="Industrial Compute Node">
+                </div>
+                <div class="form-group">
+                    <label>Kine Value (K)</label>
+                    <input type="number" id="res-kine" value="10.00">
+                </div>
+                <button onclick="registerResource()">Register on Ledger</button>
+                <div id="res-result" class="result hidden"></div>
+            </div>
+
+            <!-- RVE & Valuation -->
+            <div class="card" style="box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+                <h3>RVE Attestation & Valuation</h3>
+                <div class="form-group">
+                    <label>Measurement ID</label>
+                    <input type="text" id="rve-mid" value="MEAS-THR-9982">
+                </div>
+                <div class="form-group">
+                    <label>Energy Consumption (kWh)</label>
+                    <input type="number" id="rve-kwh" value="50">
+                </div>
+                <div class="form-group">
+                    <label>Compute Tokens</label>
+                    <input type="number" id="rve-tokens" value="500000">
+                </div>
+                <button onclick="attestAndValue()">Verify & Value</button>
+                <div id="rve-result" class="result hidden"></div>
+            </div>
+        </div>
+
+        <!-- Category 12 Fiscal Settlement -->
+        <div class="card" style="box-shadow: 0 2px 6px rgba(0,0,0,0.05); margin-top: 20px;">
+            <h3>Category-12 Fiscal Settlement (LAP State Machine)</h3>
+            <div class="form-group">
+                <label>Kine Amount to Settle</label>
+                <input type="number" id="settle-amount" value="100.00">
+            </div>
+            <button onclick="executeSettlement()">Execute Settlement (3% Structural Split)</button>
+            <div id="settle-result" class="result hidden"></div>
+        </div>
+
+        <!-- Ledger Entries Feed -->
+        <div class="card" style="box-shadow: 0 2px 6px rgba(0,0,0,0.05); margin-top: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>Global Ledger Entries</h3>
+                <button onclick="fetchLedgerEntries()">Refresh Ledger</button>
+            </div>
+            <div style="overflow-x: auto; max-height: 250px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Identifier</th>
+                            <th>Category</th>
+                            <th>User ID</th>
+                            <th>Resource Name</th>
+                            <th>Kines (K)</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ledger-table-body">
+                        <tr><td colspan="6" style="text-align: center;">Click refresh to load ledger entries.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <div class="form-group" id="node-group">
-        <label>Assigned Node Callsign</label>
-        <input type="text" id="assignedNode" value="THR">
-    </div>
-
-    <button id="submit-btn" onclick="handleSubmit()">Sign Up</button>
-
-    <div class="toggle" onclick="toggleMode()">Already have an account? Log In</div>
-
-    <div id="result-box" class="result hidden"></div>
 </div>
 
 <script>
+    const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api';
     let isLoginMode = false;
-    const API_URL = window.location.hostname === 'localhost' 
-    ? 'http://localhost:5000/api/auth' 
-    : '/api/auth';
 
     function toggleMode() {
         isLoginMode = !isLoginMode;
@@ -102,43 +205,168 @@
         document.getElementById('submit-btn').innerText = isLoginMode ? 'Log In' : 'Sign Up';
         document.getElementById('node-group').classList.toggle('hidden', isLoginMode);
         document.querySelector('.toggle').innerText = isLoginMode ? "Need an account? Sign Up" : "Already have an account? Log In";
-        document.getElementById('result-box').classList.add('hidden');
+        document.getElementById('auth-result').classList.add('hidden');
     }
 
-    async function handleSubmit() {
+    async function handleAuth() {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const assignedNode = document.getElementById('assignedNode').value;
-        const resultBox = document.getElementById('result-box');
+        const resultBox = document.getElementById('auth-result');
 
-        const endpoint = isLoginMode ? `${API_URL}/login` : `${API_URL}/signup`;
+        const endpoint = isLoginMode ? `${API_URL}/auth/login` : `${API_URL}/auth/signup`;
         const payload = isLoginMode ? { email, password } : { email, password, assignedNode };
 
         try {
-            const response = await fetch(endpoint, {
+            const res = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
-            const data = await response.json();
+            const data = await res.json();
 
-            resultBox.classList.remove('hidden');
-            if (response.ok) {
-                resultBox.style.background = '#d4edda';
-                resultBox.style.color = '#155724';
-                resultBox.innerText = JSON.stringify(data, null, 2);
+            if (res.ok) {
+                localStorage.setItem('token', data.token || '');
+                localStorage.setItem('userId', data.userId);
+                localStorage.setItem('assignedNode', data.assignedNode);
+                loadDashboard();
             } else {
+                resultBox.classList.remove('hidden');
                 resultBox.style.background = '#f8d7da';
                 resultBox.style.color = '#721c24';
-                resultBox.innerText = data.error || 'An error occurred.';
+                resultBox.innerText = data.error || 'Authentication failed.';
             }
         } catch (err) {
             resultBox.classList.remove('hidden');
             resultBox.style.background = '#f8d7da';
             resultBox.style.color = '#721c24';
-            resultBox.innerText = 'Failed to connect to backend server.';
+            resultBox.innerText = 'Connection error.';
         }
     }
+
+    function loadDashboard() {
+        document.getElementById('auth-card').classList.add('hidden');
+        document.getElementById('dashboard-card').classList.remove('hidden');
+        const userId = localStorage.getItem('userId');
+        const node = localStorage.getItem('assignedNode');
+        document.getElementById('user-info').innerText = `Logged in as: ${userId} | Node: ${node}`;
+        fetchSystemStatus();
+        fetchLedgerEntries();
+    }
+
+    function logout() {
+        localStorage.clear();
+        document.getElementById('dashboard-card').classList.add('hidden');
+        document.getElementById('auth-card').classList.remove('hidden');
+    }
+
+    async function fetchSystemStatus() {
+        try {
+            const res = await fetch(`${API_URL}/status`);
+            const data = await res.json();
+            document.getElementById('sys-status').innerText = data.status;
+            document.getElementById('sys-ticks').innerText = data.currentTicks;
+        } catch (err) {
+            document.getElementById('sys-status').innerText = 'Offline';
+        }
+    }
+
+    async function registerResource() {
+        const identifier = document.getElementById('res-id').value;
+        const categoryCode = document.getElementById('res-cat').value;
+        const resourceName = document.getElementById('res-name').value;
+        const kineValue = document.getElementById('res-kine').value;
+        const userId = localStorage.getItem('userId');
+        const resBox = document.getElementById('res-result');
+
+        try {
+            const res = await fetch(`${API_URL}/ledger/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ identifier, categoryCode, userId, resourceName, kineValue })
+            });
+            const data = await res.json();
+            resBox.classList.remove('hidden');
+            resBox.style.background = res.ok ? '#d4edda' : '#f8d7da';
+            resBox.style.color = res.ok ? '#155724' : '#721c24';
+            resBox.innerText = JSON.stringify(data, null, 2);
+            if (res.ok) fetchLedgerEntries();
+        } catch (err) {
+            resBox.classList.remove('hidden');
+            resBox.innerText = 'Registration request failed.';
+        }
+    }
+
+    async function attestAndValue() {
+        const measurementId = document.getElementById('rve-mid').value;
+        const energyKwh = parseFloat(document.getElementById('rve-kwh').value);
+        const computeTokens = parseInt(document.getElementById('rve-tokens').value);
+        const resBox = document.getElementById('rve-result');
+
+        try {
+            const res = await fetch(`${API_URL}/rve/attest-and-value`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ measurementId, energyKwh, computeTokens })
+            });
+            const data = await res.json();
+            resBox.classList.remove('hidden');
+            resBox.style.background = res.ok ? '#d4edda' : '#f8d7da';
+            resBox.style.color = res.ok ? '#155724' : '#721c24';
+            resBox.innerText = JSON.stringify(data, null, 2);
+        } catch (err) {
+            resBox.classList.remove('hidden');
+            resBox.innerText = 'RVE verification failed.';
+        }
+    }
+
+    async function executeSettlement() {
+        const kineAmount = parseFloat(document.getElementById('settle-amount').value);
+        const resBox = document.getElementById('settle-result');
+
+        try {
+            const res = await fetch(`${API_URL}/fiscal/settle`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ kineAmount })
+            });
+            const data = await res.json();
+            resBox.classList.remove('hidden');
+            resBox.style.background = res.ok ? '#d4edda' : '#f8d7da';
+            resBox.style.color = res.ok ? '#155724' : '#721c24';
+            resBox.innerText = JSON.stringify(data, null, 2);
+        } catch (err) {
+            resBox.classList.remove('hidden');
+            resBox.innerText = 'Settlement failed.';
+        }
+    }
+
+    async function fetchLedgerEntries() {
+        try {
+            const res = await fetch(`${API_URL}/ledger/entries`);
+            const entries = await res.json();
+            const tbody = document.getElementById('ledger-table-body');
+            tbody.innerHTML = '';
+            if (entries.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No ledger entries found.</td></tr>';
+                return;
+            }
+            entries.forEach(e => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${e.identifier}</td><td>${e.category_code}</td><td>${e.user_id}</td><td>${e.resource_name}</td><td>${e.kine_value}</td><td>${new Date(e.created_at).toLocaleString()}</td>`;
+                tbody.appendChild(tr);
+            });
+        } catch (err) {
+            console.error('Failed to load ledger entries');
+        }
+    }
+
+    // Auto-login check if token exists in session
+    window.onload = () => {
+        if (localStorage.getItem('token')) {
+            loadDashboard();
+        }
+    };
 </script>
 
 </body>
