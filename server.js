@@ -68,6 +68,21 @@ app.get('/api/status', (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
+// Serve a welcome message or instructions at the root URL
+app.get('/', (req, res) => {
+  res.json({
+    platform: 'Kinepool',
+    status: 'Operational',
+    masterNode: 'THRINC000',
+    description: 'Global Resource Ledger built on KUTS Architecture',
+    endpoints: {
+      status: '/api/status',
+      signup: '/api/auth/signup',
+      login: '/api/auth/login',
+      ledgerEntries: '/api/ledger/entries'
+    }
+  });
+});
 app.listen(PORT, () => {
   console.log(`Kinepool server running on port ${PORT}`);
 });
